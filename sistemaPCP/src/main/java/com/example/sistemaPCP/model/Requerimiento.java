@@ -1,4 +1,4 @@
-package com.example.sistemaPCP.model;
+package com.example.sistemaPCP.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,12 +22,6 @@ public class Requerimiento {
 
     public void setId(Integer id) {
         this.id_requerimiento = id;
-    }
-
-    public Requerimiento(String descripcion, Float valorPresupuesto, String cuentaPresupuestaria) {
-        this.descripcion = descripcion;
-        this.valorPresupuesto = valorPresupuesto;
-        this.cuentaPresupuestaria = cuentaPresupuestaria;
     }
 
     public String getDescripcion() {

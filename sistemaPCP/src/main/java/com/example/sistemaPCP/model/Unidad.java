@@ -1,4 +1,4 @@
-package com.example.sistemaPCP.model;
+package com.example.sistemaPCP.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,24 +11,17 @@ import javax.persistence.Table;
 public class Unidad {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id_unidad;
+    private Long id_unidad;
     private String nombre;
     private String siglas;
     private String Tipo;
     private Integer unidadSAF;
 
-    public Integer getId() {
+    public Long getId() {
         return id_unidad;
     }
 
-    public Unidad(String nombre, String siglas, String tipo, Integer unidadSAF) {
-        this.nombre = nombre;
-        this.siglas = siglas;
-        Tipo = tipo;
-        this.unidadSAF = unidadSAF;
-    }
-
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id_unidad = id;
     }
 

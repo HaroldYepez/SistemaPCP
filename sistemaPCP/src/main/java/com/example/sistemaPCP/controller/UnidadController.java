@@ -1,55 +1,50 @@
-package com.example.sistemaPCP.controller;
-
-import com.example.sistemaPCP.model.Unidad;
-import com.example.sistemaPCP.service.UnidadService;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
+package com.example.sistemaPCP.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/unidad/")
+import com.example.sistemaPCP.Model.*;
+import com.example.sistemaPCP.Service.api.*;
+
+@Controller
+@RequestMapping("/home")
 public class UnidadController {
+
     @Autowired
-    private UnidadService unidadService;
+    private UnidadService unidadServiceAPI;
 
-    @PostMapping
-    private ResponseEntity<Unidad> guardar(@RequestBody Unidad unidad) {
-        Unidad temporal = unidadService.create(unidad);
-        try {
-            return ResponseEntity.created(new URI("/api/unidad" + temporal.getId())).body(temporal);
+    @RequestMapping("/")
+    public String index(Model model) {
+        model.addAttribute("list", unidadServiceAPI.getAll());
+        return "index";
+    }
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-
+    @GetMapping("/save/{id}")
+    public String showSave(@PathVariable("id") Long id, Model model) {
+        if (id != null && id != 0) {
+            model.addAttribute("unidad", unidadServiceAPI.get(id));
+        } else {
+            model.addAttribute("unidad", new Unidad());
         }
+        return "save";
     }
 
-    @GetMapping
-    private ResponseEntity<List<Unidad>> ListarTodasLasUnidades() {
-        return ResponseEntity.ok(unidadService.getAllUnidad());
+    @PostMapping("/save")
+    public String save(Unidad unidad, Model model) {
+        unidadServiceAPI.save(unidad);
+        return "redirect:/";
     }
 
-    @DeleteMapping
-    private ResponseEntity<Void> eliminarUnidad(@RequestBody Unidad unidad) {
-        unidadService.delete(unidad);
-        return ResponseEntity.ok().build();
-    }
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id, Model model) {
+        unidadServiceAPI.delete(id);
 
-    @GetMapping(name = "get{id}")
-    private ResponseEntity<Optional<Unidad>> ListarUnidadesId(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(unidadService.findById(id));
+        return "redirect:/";
     }
 
 }

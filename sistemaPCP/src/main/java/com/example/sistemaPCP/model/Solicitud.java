@@ -13,7 +13,7 @@ import javax.persistence.Table;
 public class Solicitud {
     @Id
     private Integer numSolicitud;
-    private Date datatime;
+    private Date fechaSolicitud;
     private Float montoRef;
     private Integer plazoCotizacionRef;
     @ManyToOne
@@ -22,16 +22,6 @@ public class Solicitud {
     @ManyToOne
     @JoinColumn(name = "id_requerimiento")
     private Requerimiento requerimiento;
-
-    public Solicitud(Integer numSolicitud, Date datatime, Float montoRef, Integer plazoCotizacionRef, Unidad unidad,
-            Requerimiento requerimiento) {
-        this.numSolicitud = numSolicitud;
-        this.datatime = datatime;
-        this.montoRef = montoRef;
-        this.plazoCotizacionRef = plazoCotizacionRef;
-        this.unidad = unidad;
-        this.requerimiento = requerimiento;
-    }
 
     public Integer getNumSolicitud() {
         return numSolicitud;
