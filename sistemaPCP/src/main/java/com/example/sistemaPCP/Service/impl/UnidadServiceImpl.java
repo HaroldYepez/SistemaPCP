@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.sistemaPCP.Service.api.UnidadService;
 import com.example.sistemaPCP.dao.api.UnidadDaoAPi;
 import com.example.sistemaPCP.Commons.GenericServiceImpl;
-import com.example.sistemaPCP.Model.*;
+import com.example.sistemaPCP.model.*;
 
 @Service
 public class UnidadServiceImpl extends GenericServiceImpl<Unidad, Long> implements UnidadService {

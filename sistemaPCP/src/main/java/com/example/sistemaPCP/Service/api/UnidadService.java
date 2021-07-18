@@ -1,6 +1,6 @@
 package com.example.sistemaPCP.Service.api;
 
-import com.example.sistemaPCP.Model.Unidad;
+import com.example.sistemaPCP.model.Unidad;
 
 import com.example.sistemaPCP.Commons.GenericServiceAPi;
 

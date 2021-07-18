@@ -1,6 +1,6 @@
 package com.example.sistemaPCP.dao.api;
 
-import com.example.sistemaPCP.Model.Certificacion;
+import com.example.sistemaPCP.model.Certificacion;
 
 import org.springframework.data.repository.CrudRepository;
 

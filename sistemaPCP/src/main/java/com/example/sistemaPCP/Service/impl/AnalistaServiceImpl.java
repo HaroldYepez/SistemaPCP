@@ -1,7 +1,7 @@
 package com.example.sistemaPCP.Service.impl;
 
 import com.example.sistemaPCP.Commons.GenericServiceImpl;
-import com.example.sistemaPCP.Model.Analista;
+import com.example.sistemaPCP.model.Analista;
 import com.example.sistemaPCP.Service.api.AnalistaService;
 import com.example.sistemaPCP.dao.api.AnalistaDaoAPi;
 
