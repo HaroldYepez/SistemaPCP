@@ -17,7 +17,7 @@ import com.example.sistemaPCP.Model.*;
 import com.example.sistemaPCP.Service.api.*;
 
 @RestController
-@RequestMapping(value = "/api/v1/")
+@RequestMapping(value = "/api/unidad/")
 @CrossOrigin("*")
 public class UnidadRestController {
 
@@ -35,9 +35,21 @@ public class UnidadRestController {
     }
 
     @PostMapping(value = "/save")
-    public ResponseEntity<Unidad> save(@RequestBody Unidad persona) {
-        Unidad obj = unidadService.save(persona);
+    public ResponseEntity<Unidad> save(@RequestBody Unidad unidad) {
+        Unidad obj = unidadService.save(unidad);
         return new ResponseEntity<Unidad>(obj, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/delete/{id}")
+    public ResponseEntity<Unidad> delete(@PathVariable Long id) {
+        Unidad unidad = unidadService.get(id);
+        if (unidad != null) {
+            unidadService.delete(id);
+        } else {
+            return new ResponseEntity<Unidad>(unidad, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Unidad>(unidad, HttpStatus.OK);
+
     }
 
 }

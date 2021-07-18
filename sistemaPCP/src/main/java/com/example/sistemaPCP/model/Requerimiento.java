@@ -11,16 +11,16 @@ import javax.persistence.Table;
 public class Requerimiento {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id_requerimiento;
+    private Long id_requerimiento;
     private String descripcion;
     private Float valorPresupuesto;
     private String cuentaPresupuestaria;
 
-    public Integer getId() {
+    public Long getId() {
         return id_requerimiento;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id_requerimiento = id;
     }
 

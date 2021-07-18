@@ -1,4 +1,4 @@
-package com.example.sistemaPCP.model;
+package com.example.sistemaPCP.Model;
 
 import java.sql.Date;
 
@@ -32,11 +32,11 @@ public class Solicitud {
     }
 
     public Date getDatatime() {
-        return datatime;
+        return fechaSolicitud;
     }
 
     public void setDatatime(Date datatime) {
-        this.datatime = datatime;
+        this.fechaSolicitud = datatime;
     }
 
     public Float getMontoRef() {
