@@ -1,6 +1,6 @@
 package com.example.sistemaPCP.dao.api;
 
-import com.example.sistemaPCP.Model.Tramite;
+import com.example.sistemaPCP.model.Tramite;
 
 import org.springframework.data.repository.CrudRepository;
 

@@ -1,8 +1,8 @@
-package com.example.sistemaPCP.Controller;
+package com.example.sistemaPCP.controller;
 
 import java.util.List;
 
-import com.example.sistemaPCP.Model.Tramite;
+import com.example.sistemaPCP.model.Tramite;
 import com.example.sistemaPCP.Service.api.TramiteService;
 
 import org.springframework.beans.factory.annotation.Autowired;

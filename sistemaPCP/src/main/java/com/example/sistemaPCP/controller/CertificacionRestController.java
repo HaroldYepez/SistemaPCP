@@ -1,8 +1,8 @@
-package com.example.sistemaPCP.Controller;
+package com.example.sistemaPCP.controller;
 
 import java.util.List;
 
-import com.example.sistemaPCP.Model.Certificacion;
+import com.example.sistemaPCP.model.Certificacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

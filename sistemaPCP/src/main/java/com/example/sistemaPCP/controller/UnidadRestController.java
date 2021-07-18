@@ -1,4 +1,4 @@
-package com.example.sistemaPCP.Controller;
+package com.example.sistemaPCP.controller;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.sistemaPCP.Model.*;
+import com.example.sistemaPCP.model.*;
 import com.example.sistemaPCP.Service.api.*;
 
 @RestController

@@ -1,9 +1,9 @@
-package com.example.sistemaPCP.Controller;
+package com.example.sistemaPCP.controller;
 
 import java.util.List;
 
 import com.example.sistemaPCP.Service.api.*;
-import com.example.sistemaPCP.Model.Requerimiento;
+import com.example.sistemaPCP.model.Requerimiento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

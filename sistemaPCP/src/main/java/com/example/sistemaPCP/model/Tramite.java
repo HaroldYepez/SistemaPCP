@@ -1,4 +1,4 @@
-package com.example.sistemaPCP.Model;
+package com.example.sistemaPCP.model;
 
 import java.sql.Date;
 

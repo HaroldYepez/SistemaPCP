@@ -1,4 +1,4 @@
-package com.example.sistemaPCP.Model;
+package com.example.sistemaPCP.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

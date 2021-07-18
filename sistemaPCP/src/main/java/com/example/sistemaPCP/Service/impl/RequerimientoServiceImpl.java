@@ -1,7 +1,7 @@
 package com.example.sistemaPCP.Service.impl;
 
 import com.example.sistemaPCP.Commons.GenericServiceImpl;
-import com.example.sistemaPCP.Model.Requerimiento;
+import com.example.sistemaPCP.model.Requerimiento;
 import com.example.sistemaPCP.Service.api.RequerimientoService;
 import com.example.sistemaPCP.dao.api.RequerimientoDaoApi;
 

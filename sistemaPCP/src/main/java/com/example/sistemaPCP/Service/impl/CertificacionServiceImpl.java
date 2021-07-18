@@ -1,7 +1,7 @@
 package com.example.sistemaPCP.Service.impl;
 
 import com.example.sistemaPCP.Commons.GenericServiceImpl;
-import com.example.sistemaPCP.Model.Certificacion;
+import com.example.sistemaPCP.model.Certificacion;
 import com.example.sistemaPCP.Service.api.CertificacionService;
 import com.example.sistemaPCP.dao.api.CertificacionDaoAPi;
 

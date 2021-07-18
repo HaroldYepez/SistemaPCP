@@ -1,7 +1,7 @@
 package com.example.sistemaPCP.Service.impl;
 
 import com.example.sistemaPCP.Commons.GenericServiceImpl;
-import com.example.sistemaPCP.Model.Tramite;
+import com.example.sistemaPCP.model.Tramite;
 import com.example.sistemaPCP.Service.api.TramiteService;
 import com.example.sistemaPCP.dao.api.TramiteDaoAPi;
 
