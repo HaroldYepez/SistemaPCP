@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Table(name = "tramite")
 public class Tramite {
     @Id
-    private Integer numTramite;
+    private Long numTramite;
     private Float totalCofRef;
     private Date fechaAsignacion;
     @ManyToOne

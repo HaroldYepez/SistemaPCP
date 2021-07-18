@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Table(name = "solicitud")
 public class Solicitud {
     @Id
-    private Integer numSolicitud;
+    private Long numSolicitud;
     private Date fechaSolicitud;
     private Float montoRef;
     private Integer plazoCotizacionRef;
@@ -23,11 +23,11 @@ public class Solicitud {
     @JoinColumn(name = "id_requerimiento")
     private Requerimiento requerimiento;
 
-    public Integer getNumSolicitud() {
+    public Long getNumSolicitud() {
         return numSolicitud;
     }
 
-    public void setNumSolicitud(Integer numSolicitud) {
+    public void setNumSolicitud(Long numSolicitud) {
         this.numSolicitud = numSolicitud;
     }
 
