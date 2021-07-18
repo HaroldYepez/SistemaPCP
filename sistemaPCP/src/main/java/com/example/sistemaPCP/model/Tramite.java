@@ -26,6 +26,23 @@ public class Tramite {
     private String tareaActual;
     private Float montoContractual;
     private String tipoProcedimiento;
+    private String objContratacion;
+
+    public Long getNumTramite() {
+        return numTramite;
+    }
+
+    public void setNumTramite(Long numTramite) {
+        this.numTramite = numTramite;
+    }
+
+    public String getObjContratacion() {
+        return objContratacion;
+    }
+
+    public void setObjContratacion(String objContratacion) {
+        this.objContratacion = objContratacion;
+    }
 
     public Float getTotalCofRef() {
         return totalCofRef;

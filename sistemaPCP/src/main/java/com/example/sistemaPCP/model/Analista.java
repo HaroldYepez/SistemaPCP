@@ -15,7 +15,6 @@ public class Analista {
     private String nombres;
     private String apellidos;
     private String cedula;
-    private String objContratacion;
 
     public Long getId_analista() {
         return id_analista;
@@ -47,14 +46,6 @@ public class Analista {
 
     public void setCedula(String cedula) {
         this.cedula = cedula;
-    }
-
-    public String getObjContratacion() {
-        return objContratacion;
-    }
-
-    public void setObjContratacion(String objContratacion) {
-        this.objContratacion = objContratacion;
     }
 
 }
