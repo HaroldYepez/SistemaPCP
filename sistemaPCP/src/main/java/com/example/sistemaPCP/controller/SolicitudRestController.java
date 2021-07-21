@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.example.sistemaPCP.model.Solicitud;
 import com.example.sistemaPCP.Service.api.SolicitudService;
-
+import com.example.sistemaPCP.model.Actividad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +51,7 @@ public class SolicitudRestController {
         return new ResponseEntity<Solicitud>(solicitud, HttpStatus.OK);
 
     }
+
+    
 
 }

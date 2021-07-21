@@ -1,9 +1,9 @@
-package com.example.sistemaPCP.Controller;
+package com.example.sistemaPCP.controller;
 
 import java.util.List;
 
-import com.example.sistemaPCP.Model.Actividad;
 import com.example.sistemaPCP.Service.api.ActividadService;
+import com.example.sistemaPCP.model.Actividad;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,4 +50,10 @@ public class ActividadRestController {
         return new ResponseEntity<Actividad>(actividad, HttpStatus.OK);
 
     }
+
+    @GetMapping(value = "/SoliAct/{id}")
+    public List<Actividad> listaActividad(@PathVariable Long id) {
+        return actividadService.listaActividad(id);
+    }
+
 }

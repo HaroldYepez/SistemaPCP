@@ -1,12 +1,21 @@
 package com.example.sistemaPCP.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "solicitud")
@@ -22,6 +31,11 @@ public class Solicitud {
     @ManyToOne
     @JoinColumn(name = "id_requerimiento")
     private Requerimiento requerimiento;
+
+    @ManyToMany
+    @JoinTable(name = "actividad", joinColumns = { @JoinColumn(name = "id_requerimiento") }, inverseJoinColumns = {
+            @JoinColumn(name = "id_requerimeinto") })
+    private List<Actividad> actividades;
 
     public Long getNumSolicitud() {
         return numSolicitud;

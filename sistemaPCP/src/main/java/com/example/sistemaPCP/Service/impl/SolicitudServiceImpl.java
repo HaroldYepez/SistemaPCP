@@ -1,6 +1,9 @@
 package com.example.sistemaPCP.Service.impl;
 
+import java.util.List;
+
 import com.example.sistemaPCP.Commons.GenericServiceImpl;
+import com.example.sistemaPCP.model.Actividad;
 import com.example.sistemaPCP.model.Solicitud;
 import com.example.sistemaPCP.Service.api.SolicitudService;
 import com.example.sistemaPCP.dao.api.SolicitudDaoApi;
@@ -18,5 +21,7 @@ public class SolicitudServiceImpl extends GenericServiceImpl<Solicitud, Long> im
     public CrudRepository<Solicitud, Long> getDao() {
         return solicitudDaoAPi;
     }
+
+  
 
 }

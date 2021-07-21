@@ -1,8 +1,48 @@
 
-.custom-bar{
+.navbar-fondo{
     background-color: #011D42;
+
+}
+.image-nav{
+    max-width: 155px;
+    margin: 0%;
     
 }
+.h1-nav{
+    color: rgb(158, 149, 149);
+    font-size: 14px;
+    text-align: left;
+    margin: 0%;
+    font-family: Helvetica, Arial, sans-serif;
+}
+.h2-nav{
+    color: rgb(158, 149, 149);
+    font-size: 16px;
+    font-weight: 700;
+    text-align: left;
+    margin: 0%;
+    font-family: Helvetica, Arial, sans-serif;
+}
+.h3-nav{
+
+    color: #F8B82B;
+    font-size: 12px;
+    text-align: right;
+    margin: 0%;
+    font-family: Helvetica, Arial, sans-serif;
+}
+.nav-links:hover{
+    color: #F8B82B;
+}
+.custom-text-nav{
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 500;
+    
+}
+/*     
+
 
 .custom-text-nav{
     color: white;
@@ -77,4 +117,4 @@
     max-width: 100%;
     padding: 0%;
     margin: 0%;
-}
+} */
