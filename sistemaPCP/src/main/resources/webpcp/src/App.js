@@ -6,9 +6,11 @@ import {Container, Row,Col} from 'react-bootstrap';
 import NavigationBar from './component/NavigationBar';
 import {BrowserRouter as Router , Switch, Route} from 'react-router-dom';
 import POAvsC from './component/POAvsC';
-//import POAvsMC from './component/POAvsMC';
-//import POAvsS from './component/POAvsS';
-// import Inicio from './component/Inicio';
+import POAvsMC from './component/POAvsMC';
+import POAvsS from './component/POAvsS';
+import Inicio from './component/Inicio';
+import './component/NavigationBar.css';
+import './component/estilos.css';
 
 export default class APP extends  Component{
   constructor(){
@@ -22,16 +24,18 @@ export default class APP extends  Component{
   }
   render(){
     return(
-      <Router>
+      <Router style={{ paddingBottom: '0%' }}>
         <NavigationBar/>
-        <Container>
+        <Container className="container2" style={{textAlign: 'center', marginLeft: '0%',background: 'white', maxWidth: '100%' }} >
           <Row>
           <Col>
-            
-            
-            <Route path="/POAvsC" exact component={POAvsC}/>
-           
-            </Col>
+            <Switch>
+              <Route path="/" exact component={Inicio}/>
+              <Route path="/POAvsS" exact component={POAvsS}/>
+              <Route path="/POAvsC" exact component={POAvsC}/>
+              <Route path="/POAvsMC" exact component={POAvsMC}/>
+            </Switch>
+          </Col>
           </Row>
         </Container>
         <Footer/>

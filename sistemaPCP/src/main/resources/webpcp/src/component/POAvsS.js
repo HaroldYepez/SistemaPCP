@@ -51,7 +51,7 @@ class POAvsS extends React.Component{
         
 
         return(
-            <Container className="container-reportes">
+            <Container style={{background: 'white', padding:'1%'}}>
                 <Col>
                     <Row style={{ marginLeft: 200, marginRight: 0}}>
                         <InputGroup className="mb-3">

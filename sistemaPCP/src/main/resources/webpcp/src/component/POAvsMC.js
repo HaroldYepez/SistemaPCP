@@ -6,8 +6,8 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
 import Table from 'react-bootstrap/Table'
 import {FcViewDetails} from 'react-icons/fc';
-import Button from 'react-bootstrap/Button'
-import './estilos.css'
+import Button from 'react-bootstrap/Button';
+import './estilos.css';
 
 class POAvsMC extends React.Component{
 
@@ -51,7 +51,7 @@ class POAvsMC extends React.Component{
         
 
         return(
-            <Container className="container-reportes">
+            <Container style={{background: 'white', padding:'1%'}}>
                 <Col>
                     <Row style={{ marginLeft: 200, marginRight: 0}}>
                         <InputGroup className="mb-3">

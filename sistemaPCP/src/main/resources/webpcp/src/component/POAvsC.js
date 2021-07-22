@@ -62,7 +62,7 @@ export default class POAvsC extends Component {
         console.log("aqui")
         return (
             
-            <Container>
+            <Container style={{background: 'white', padding:'1%'}}>
                 <Table>
                     <thead>
                         
