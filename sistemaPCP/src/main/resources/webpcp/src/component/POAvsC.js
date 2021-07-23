@@ -55,38 +55,44 @@ export default class POAvsC extends Component {
     }
 
     render() {
-        console.log(this.state)
-        this.state.solicitud.map((elemento)=>(
-            console.log(this.solicitudService.listarActividades(elemento.requerimiento))
-        ))
-        console.log("aqui")
+        
         return (
             
             <Container style={{background: 'white', padding:'1%'}}>
                 <Table>
-                    <thead>
-                        
-                        <th>Solicitudes</th>
-                        <th>Unidad Requiriente</th>
-                        <th>Monto Referencial</th>
+                <Col>
+                    
+                    <thead>                        
+                        <th>ActividadPoa</th>
                         <th>Presupuesto Asignado</th>
-                        <th>Actividad</th>
+                        <th>Unidad Requerimiento</th>
+                        <th>Solicitud Asignada</th>
+                        <th>Solicitudes Cuantificados monto referencial</th>
+                        <th>Porcentaje</th>
                         
-                        
-                       
+                    
                     </thead>
                     <tbody>
                         {this.state.solicitud.map((elemento)=>(
                            
                             <tr>
-                                <td>{elemento.numSolicitud}</td>
-                                <td>{elemento.unidad.siglas}</td>
-                                <td>{elemento.montoRef}</td>
+                                <td>{elemento.requerimiento.actividad.descripcion_acti}</td>
                                 <td>{elemento.requerimiento.valorPresupuesto}</td>
+                                <td>{elemento.unidad.siglas}</td>
+                                <td>{elemento.numSolicitud}</td>
+                                <td>{elemento.montoRef}</td>
+                                <td>{(parseInt(elemento.montoRef)*100)/elemento.requerimiento.valorPresupuesto+ "%"}</td>
+                               
+                                
+                                
+
+
+                               
                             </tr>
                             
                         ))}
                     </tbody>
+                    </Col>
                 </Table>
             </Container>
         )

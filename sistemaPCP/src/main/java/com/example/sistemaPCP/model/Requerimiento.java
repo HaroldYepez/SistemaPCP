@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,9 +17,20 @@ public class Requerimiento {
     private String descripcion;
     private Float valorPresupuesto;
     private String cuentaPresupuestaria;
+    @ManyToOne
+    @JoinColumn(name = "id_actividad")
+    private Actividad actividad;
 
     public Long getId() {
         return id_requerimiento;
+    }
+
+    public Actividad getActividad() {
+        return actividad;
+    }
+
+    public void setActividad(Actividad actividad) {
+        this.actividad = actividad;
     }
 
     public void setId(Long id) {

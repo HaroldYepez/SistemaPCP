@@ -4,8 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -14,9 +12,6 @@ public class Actividad {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id_actividad;
-    @ManyToOne
-    @JoinColumn(name = "id_requerimiento")
-    private Requerimiento requerimiento;
     private String descripcion_acti;
     private float precTotal;
 
@@ -26,14 +21,6 @@ public class Actividad {
 
     public void setId_actividad(Long id_actividad) {
         this.id_actividad = id_actividad;
-    }
-
-    public Requerimiento getRequerimiento() {
-        return requerimiento;
-    }
-
-    public void setRequerimiento(Requerimiento requerimiento) {
-        this.requerimiento = requerimiento;
     }
 
     public String getDescripcion_acti() {

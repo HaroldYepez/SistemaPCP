@@ -32,11 +32,6 @@ public class Solicitud {
     @JoinColumn(name = "id_requerimiento")
     private Requerimiento requerimiento;
 
-    @ManyToMany
-    @JoinTable(name = "actividad", joinColumns = { @JoinColumn(name = "id_requerimiento") }, inverseJoinColumns = {
-            @JoinColumn(name = "id_requerimeinto") })
-    private List<Actividad> actividades;
-
     public Long getNumSolicitud() {
         return numSolicitud;
     }
