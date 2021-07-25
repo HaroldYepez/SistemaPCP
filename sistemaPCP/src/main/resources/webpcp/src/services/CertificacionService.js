@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-export class ActividadService{
-    baseUrl="http://localhost:8080/api/actividad/";
+export class CertificacionService{
+    baseUrl="http://localhost:8080/api/certificacion/";
     getAll(){
         return axios.get(this.baseUrl+"all").then(res => res.data)
       
     }
-  
+   
 }

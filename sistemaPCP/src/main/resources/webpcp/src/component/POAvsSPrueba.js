@@ -15,7 +15,7 @@ import './estilos.css';
 import { RequerimientoService } from '../services/RequerimientoService';
 
 
-export default class POAvsC extends Component {
+export default class POAvsSPrueba extends Component {
     constructor() {
         super();
         this.state = {
