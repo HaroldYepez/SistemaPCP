@@ -1,11 +1,9 @@
 package com.example.sistemaPCP.model;
 
 import java.sql.Date;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -25,8 +23,9 @@ public class Solicitud {
     @JoinColumn(name = "id_requerimiento")
     private Requerimiento requerimiento;
 
-    @ManyToMany
-    List<Tramite> tramite;
+    @ManyToOne
+    @JoinColumn(name = "numTramite")
+    private Tramite tramite;
 
     public Long getNumSolicitud() {
         return numSolicitud;
@@ -76,11 +75,11 @@ public class Solicitud {
         this.requerimiento = requerimiento;
     }
 
-    public List<Tramite> getTramite() {
+    public Tramite getTramite() {
         return tramite;
     }
 
-    public void setTramite(List<Tramite> tramite) {
+    public void setTramite(Tramite tramite) {
         this.tramite = tramite;
     }
 
