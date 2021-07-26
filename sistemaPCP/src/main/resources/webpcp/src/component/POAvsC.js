@@ -74,10 +74,10 @@ export default class POAvsC extends Component {
     render() {   
         return (
             <Container style={{background: 'white', padding:'1%'}}>
-                <Table>
+                <Table striped bordered hover>
                 <Col>
                     
-                    <thead>                        
+                    <thead className='fila-titulo' style={{ height: 50}}>                        
                         <th>ActividadPoa</th>
                         <th>Presupuesto Asignado</th>
                         <th>Unidad Requerimiento</th>

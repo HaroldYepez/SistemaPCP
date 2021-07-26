@@ -17,12 +17,12 @@ public class Unidad {
     private String Tipo;
     private Integer unidadSAF;
 
-    public Long getId() {
+    public Long getId_unidad() {
         return id_unidad;
     }
 
-    public void setId(Long id) {
-        this.id_unidad = id;
+    public void setId_unidad(Long id_unidad) {
+        this.id_unidad = id_unidad;
     }
 
     public String getNombre() {

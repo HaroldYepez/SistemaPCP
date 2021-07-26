@@ -12,19 +12,11 @@ public class Certificacion {
     @Id
     private Long noCertificacion;
     @ManyToOne
-    @JoinColumn(name = "numTramite")
+    @JoinColumn(name = "numTramite", nullable = false)
     private Tramite tramite;
     private Integer partida;
     private Integer fuente;
     private Float total;
-
-    public Integer getPartida() {
-        return partida;
-    }
-
-    public void setPartida(Integer partida) {
-        this.partida = partida;
-    }
 
     public Long getNoCertificacion() {
         return noCertificacion;
@@ -42,6 +34,14 @@ public class Certificacion {
         this.tramite = tramite;
     }
 
+    public Integer getPartida() {
+        return partida;
+    }
+
+    public void setPartida(Integer partida) {
+        this.partida = partida;
+    }
+
     public Integer getFuente() {
         return fuente;
     }
@@ -57,4 +57,5 @@ public class Certificacion {
     public void setTotal(Float total) {
         this.total = total;
     }
+
 }

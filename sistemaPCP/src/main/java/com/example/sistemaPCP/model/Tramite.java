@@ -1,10 +1,11 @@
 package com.example.sistemaPCP.model;
 
 import java.sql.Date;
-
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -13,14 +14,19 @@ import javax.persistence.Table;
 public class Tramite {
     @Id
     private Long numTramite;
-    private Float totalCofRef;
+    private Float totalCotRef;
     private Date fechaAsignacion;
     @ManyToOne
-    @JoinColumn(name = "id_analista")
+    @JoinColumn(name = "id_analista", nullable = false)
     private Analista analista;
+
     @ManyToOne
-    @JoinColumn(name = "id_unidad")
+    @JoinColumn(name = "id_unidad", nullable = false)
     private Unidad unidad;
+
+    @ManyToMany(mappedBy = "tramite")
+    List<Solicitud> solicitud;
+
     private Float subtotal;
     private Float iva;
     private String tareaActual;
@@ -36,20 +42,12 @@ public class Tramite {
         this.numTramite = numTramite;
     }
 
-    public String getObjContratacion() {
-        return objContratacion;
+    public Float getTotalCotRef() {
+        return totalCotRef;
     }
 
-    public void setObjContratacion(String objContratacion) {
-        this.objContratacion = objContratacion;
-    }
-
-    public Float getTotalCofRef() {
-        return totalCofRef;
-    }
-
-    public void setTotalCofRef(Float totalCofRef) {
-        this.totalCofRef = totalCofRef;
+    public void setTotalCotRef(Float totalCotRef) {
+        this.totalCotRef = totalCotRef;
     }
 
     public Date getFechaAsignacion() {
@@ -74,6 +72,14 @@ public class Tramite {
 
     public void setUnidad(Unidad unidad) {
         this.unidad = unidad;
+    }
+
+    public List<Solicitud> getSolicitud() {
+        return solicitud;
+    }
+
+    public void setSolicitud(List<Solicitud> solicitud) {
+        this.solicitud = solicitud;
     }
 
     public Float getSubtotal() {
@@ -114,6 +120,14 @@ public class Tramite {
 
     public void setTipoProcedimiento(String tipoProcedimiento) {
         this.tipoProcedimiento = tipoProcedimiento;
+    }
+
+    public String getObjContratacion() {
+        return objContratacion;
+    }
+
+    public void setObjContratacion(String objContratacion) {
+        this.objContratacion = objContratacion;
     }
 
 }

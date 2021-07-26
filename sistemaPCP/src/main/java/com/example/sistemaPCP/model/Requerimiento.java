@@ -18,23 +18,15 @@ public class Requerimiento {
     private Float valorPresupuesto;
     private String cuentaPresupuestaria;
     @ManyToOne
-    @JoinColumn(name = "id_actividad")
+    @JoinColumn(name = "id_actividad", nullable = false)
     private Actividad actividad;
 
-    public Long getId() {
+    public Long getId_requerimiento() {
         return id_requerimiento;
     }
 
-    public Actividad getActividad() {
-        return actividad;
-    }
-
-    public void setActividad(Actividad actividad) {
-        this.actividad = actividad;
-    }
-
-    public void setId(Long id) {
-        this.id_requerimiento = id;
+    public void setId_requerimiento(Long id_requerimiento) {
+        this.id_requerimiento = id_requerimiento;
     }
 
     public String getDescripcion() {
@@ -59,6 +51,13 @@ public class Requerimiento {
 
     public void setCuentaPresupuestaria(String cuentaPresupuestaria) {
         this.cuentaPresupuestaria = cuentaPresupuestaria;
+    }
+    public Actividad getActividad() {
+        return actividad;
+    }
+
+    public void setActividad(Actividad actividad) {
+        this.actividad = actividad;
     }
 
 }

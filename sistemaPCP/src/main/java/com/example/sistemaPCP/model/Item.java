@@ -51,12 +51,12 @@ public class Item {
         this.valorUnitario = valorUnitario;
     }
 
-    public Integer getCantiodad() {
+    public Integer getCantidad() {
         return cantidad;
     }
 
-    public void setCantiodad(Integer cantiodad) {
-        this.cantidad = cantiodad;
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
     }
 
     public Float getValorTotal() {
