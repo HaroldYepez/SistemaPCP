@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SistemaPcpApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(SistemaPcpApplication.class, args);
+
 	}
 
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container} from 'react-bootstrap';
+import {Container, Modal, ModalBody} from 'react-bootstrap';
 import {Row} from 'react-bootstrap';
 import {Col} from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup'
@@ -8,6 +8,7 @@ import Table from 'react-bootstrap/Table'
 import {FcViewDetails} from 'react-icons/fc';
 import Button from 'react-bootstrap/Button'
 import './estilos.css'
+import ModalHeader from 'react-bootstrap/esm/ModalHeader';
 
 class POAvsS extends React.Component{
 
@@ -51,6 +52,7 @@ class POAvsS extends React.Component{
         
 
         return(
+            <>
             <Container style={{background: 'white', padding:'1%'}}>
                 <Col>
                     <Row style={{ marginLeft: 200, marginRight: 0}}>
@@ -80,11 +82,23 @@ class POAvsS extends React.Component{
                             </tbody>
                         </Table>
                     </Row>
-
                 </Col>
             </Container>
+            <Modal>
+                <ModalHeader>
+                <div><h3>Detalle Solicitudes</h3></div>
+                </ModalHeader>
+                <ModalBody>
+
+                </ModalBody>
+
+
+            </Modal>
             
+            </>  
         );
+      
+   
     }
 }
 
