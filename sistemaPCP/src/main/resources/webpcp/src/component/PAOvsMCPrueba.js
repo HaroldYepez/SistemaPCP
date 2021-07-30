@@ -20,7 +20,7 @@ import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
 
-export default class POAvsSPrueba extends Component {
+export default class POAvsMCPrueba extends Component {
   constructor() {
     super();
     this.state = {
@@ -40,40 +40,17 @@ export default class POAvsSPrueba extends Component {
     this.solicitudService = new SolicitudService();
     this.requerimientoSevice = new RequerimientoService();
   }
-
-  // mostrarModalActualizar = (id_Actividad) => {
-  //   this.setState((id_Actividad) => ({
-  //     selActividad: this.id_Actividad
-  //   }));
-  //   this.setState({ modalActualizar: true });
-    
-  // };
   mostrarModalActualizar = (idActividad) => {
     this.setState({
       selActividad: idActividad,
       modalActualizar: true,
     });
-    //  this.setState((idActividad) => ({
-    //   selActividad: idActividad
-    // }));
     console.log("este dato pase aqui"+this.state.selActividad);
   };
   cerrarModalActualizar = () => {
     this.setState({ modalActualizar: false });
   };
-  getDetalleSolicitud = () => {
-    // console.log(Object.values(this.state.listaActividad.id_actividad))
-    // this.solicitud.map((elemento) => (
-
-
-    // ))
-  };
-
-  getActividades = () => {
-    this.unidadService.getAll().then((data) => {
-      this.setState({ unidad: data });
-      console.log("aqui estoy guardando la lista unidad");
-    });
+  getMontoContractual = () => {
     this.solicitudService.getAll().then((data) => {
       this.setState({ solicitud: data });
       console.log("aqui estoy guardando la lista solicitud");
@@ -82,24 +59,27 @@ export default class POAvsSPrueba extends Component {
       data.map((elemento) => {
         if (results[elemento.requerimiento.actividad.id_actividad] == null) {
           var json = {};
-          act[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
+          act[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.tramite.montoContractual}];
           //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
           json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
-          json["presupuesto"] = elemento.requerimiento.actividad.precTotal;
+          json["presupuesto"] = elemento.requerimiento.valorPresupuesto;
           json["unidad"] = elemento.unidad.siglas;
           json["solicitud"] = 1;
-          json["montoReferencial"] = elemento.montoRef;
+          json["montoContractual"] = elemento.tramite.montoContractual;
           results[elemento.requerimiento.actividad.id_actividad] = json;
         } else {
-          act[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
+          act[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.tramite.montoContractual})
           //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
           console.log(elemento.numSolicitud)
           results[elemento.requerimiento.actividad.id_actividad][
             "solicitud"
           ] += 1;
           results[elemento.requerimiento.actividad.id_actividad][
-            "montoReferencial"
-          ] += elemento.montoRef;
+            "montoContractual"
+          ] += elemento.tramite.montoContractual;
+          results[elemento.requerimiento.actividad.id_actividad][
+            "presupuesto"
+          ] +=elemento.requerimiento.valorPresupuesto;
         }
         
       });
@@ -113,7 +93,7 @@ export default class POAvsSPrueba extends Component {
   };
 
   componentDidMount() {
-    this.getActividades();
+    this.getMontoContractual();
   }
 
   render() {
@@ -127,7 +107,7 @@ export default class POAvsSPrueba extends Component {
                 <th>Presupuesto Asignado</th>
                 <th>Unidad Requerimiento</th>
                 <th>Solicitud Asignada</th>
-                <th>Solicitudes Cuantificados monto referencial</th>
+                <th>Monto Contractual</th>
                 <th>Porcentaje</th>
                 <th>Detalles</th>
               </thead>
@@ -138,9 +118,9 @@ export default class POAvsSPrueba extends Component {
                     <td>{elemento.presupuesto}</td>
                     <td>{elemento.unidad}</td>
                     <td>{elemento.solicitud}</td>
-                    <td>{elemento.montoReferencial}</td>
+                    <td>{elemento.montoContractual}</td>
                     <td>
-                      {(parseInt(elemento.montoReferencial) * 100) /
+                      {(parseInt(elemento.montoContractual) * 100) /
                         elemento.presupuesto +
                         "%"}
                     </td>

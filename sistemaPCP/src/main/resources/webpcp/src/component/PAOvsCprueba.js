@@ -21,13 +21,17 @@ export default class POAvsCPrueba extends Component {
             tramite: [],
             certificacion:[],
             unidad:[],    
-            listaCertificacion:[]
+            listaCertificacion:[],
+            solicitud:[],
         }
         this.tramiteService = new TramiteService();
         this.actividadService=new ActividadService();
         this.unidadService=new UnidadService();
         this.solicitudService=new SolicitudService();
         this.certificacionService=new CertificacionService()
+        getCertificaciones = () => {
+
+        }
 
     }
 }
