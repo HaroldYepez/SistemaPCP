@@ -6,7 +6,8 @@ export class SolicitudService{
         return axios.get(this.baseUrl+"all").then(res => res.data)
       
     }
-    listarActividades(id){
-        return axios.get(this.baseUrl+"SoliAct/"+id).then(res => res.data)
+    getId(id){
+        return axios.get(this.baseUrl+"find/"+id).then(res=>res.data)
+
     }
 }

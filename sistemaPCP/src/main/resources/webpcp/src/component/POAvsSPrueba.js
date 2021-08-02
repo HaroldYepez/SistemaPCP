@@ -85,7 +85,7 @@ export default class POAvsSPrueba extends Component {
           act[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
           //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
           json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
-          json["presupuesto"] = elemento.requerimiento.actividad.precTotal;
+          json["presupuesto"] = elemento.requerimiento.valorPresupuesto;
           json["unidad"] = elemento.unidad.siglas;
           json["solicitud"] = 1;
           json["montoReferencial"] = elemento.montoRef;
@@ -100,6 +100,9 @@ export default class POAvsSPrueba extends Component {
           results[elemento.requerimiento.actividad.id_actividad][
             "montoReferencial"
           ] += elemento.montoRef;
+          results[elemento.requerimiento.actividad.id_actividad][
+            "presupuesto"
+          ] += elemento.requerimiento.valorPresupuesto;
         }
         
       });

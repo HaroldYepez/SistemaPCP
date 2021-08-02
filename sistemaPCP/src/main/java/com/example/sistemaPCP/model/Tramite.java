@@ -1,10 +1,13 @@
 package com.example.sistemaPCP.model;
 
 import java.sql.Date;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -21,6 +24,10 @@ public class Tramite {
     @ManyToOne
     @JoinColumn(name = "id_unidad", nullable = false)
     private Unidad unidad;
+
+    @OneToMany(mappedBy = "tramite")
+    @JoinColumn(name = "no_certificacion")
+    private List<Certificacion> certificacion;
 
     private Float subtotal;
     private Float iva;
@@ -103,6 +110,14 @@ public class Tramite {
 
     public String getTipoProcedimiento() {
         return tipoProcedimiento;
+    }
+
+    public List<Certificacion> getCertificacion() {
+        return certificacion;
+    }
+
+    public void setCertificacion(List<Certificacion> certificacion) {
+        this.certificacion = certificacion;
     }
 
     public void setTipoProcedimiento(String tipoProcedimiento) {
