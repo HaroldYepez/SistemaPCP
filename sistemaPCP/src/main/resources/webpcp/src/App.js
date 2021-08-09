@@ -5,14 +5,13 @@ import Footer from './component/Footer';
 import {Container, Row,Col} from 'react-bootstrap';
 import NavigationBar from './component/NavigationBar';
 import {BrowserRouter as Router , Switch, Route} from 'react-router-dom';
-import POAvsCPrueba from './component/PAOvsCPrueba';
-// import POAvsMC from './component/POAvsMC';
-import POAvsMCPrueba from './component/PAOvsMCPrueba';
-import POAvsS from './component/POAvsSPrueba';
+import POAvsC from './component/POAvsC';
+import POAvsMC from './component/POAvsMC';
+import POAvsS from './component/POAvsS';
 import Inicio from './component/Inicio';
 import './component/NavigationBar.css';
 import './component/estilos.css';
-import POAvsSPrueba from './component/POAvsSPrueba';
+
 
 export default class APP extends  Component{
   constructor(){
@@ -33,9 +32,9 @@ export default class APP extends  Component{
           <Col>
             <Switch>
               <Route path="/" exact component={Inicio}/>
-              <Route path="/POAvsS" exact component={POAvsSPrueba}/>
-              <Route path="/POAvsC" exact component={POAvsCPrueba}/>
-              <Route path="/POAvsMC" exact component={POAvsMCPrueba}/>
+              <Route path="/POAvsS" exact component={POAvsS}/>
+              <Route path="/POAvsC" exact component={POAvsC}/>
+              <Route path="/POAvsMC" exact component={POAvsMC}/>
             </Switch>
           </Col>
           </Row>

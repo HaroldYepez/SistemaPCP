@@ -26,7 +26,6 @@ public class Tramite {
     private Unidad unidad;
 
     @OneToMany(mappedBy = "tramite")
-    @JoinColumn(name = "no_certificacion")
     private List<Certificacion> certificacion;
 
     private Float subtotal;
