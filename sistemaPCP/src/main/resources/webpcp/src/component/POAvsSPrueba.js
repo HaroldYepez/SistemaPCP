@@ -19,6 +19,7 @@ import { FcViewDetails } from "react-icons/fc";
 import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 
 export default class POAvsSPrueba extends Component {
   constructor() {
@@ -31,8 +32,8 @@ export default class POAvsSPrueba extends Component {
       requerimeinto: [],
       listaActividad: [],
       modalActualizar: false,
-      numSolicitudes:{},
-      selActividad:"",
+      numSolicitudes: {},
+      selActividad: "",
     };
     this.tramiteService = new TramiteService();
     this.actividadService = new ActividadService();
@@ -46,7 +47,7 @@ export default class POAvsSPrueba extends Component {
   //     selActividad: this.id_Actividad
   //   }));
   //   this.setState({ modalActualizar: true });
-    
+
   // };
   mostrarModalActualizar = (idActividad) => {
     this.setState({
@@ -56,7 +57,7 @@ export default class POAvsSPrueba extends Component {
     //  this.setState((idActividad) => ({
     //   selActividad: idActividad
     // }));
-    console.log("este dato pase aqui"+this.state.selActividad);
+    console.log("este dato pase aqui" + this.state.selActividad);
   };
   cerrarModalActualizar = () => {
     this.setState({ modalActualizar: false });
@@ -64,8 +65,6 @@ export default class POAvsSPrueba extends Component {
   getDetalleSolicitud = () => {
     // console.log(Object.values(this.state.listaActividad.id_actividad))
     // this.solicitud.map((elemento) => (
-
-
     // ))
   };
 
@@ -78,11 +77,13 @@ export default class POAvsSPrueba extends Component {
       this.setState({ solicitud: data });
       console.log("aqui estoy guardando la lista solicitud");
       var results = {};
-      var act = {}
+      var act = {};
       data.map((elemento) => {
         if (results[elemento.requerimiento.actividad.id_actividad] == null) {
           var json = {};
-          act[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
+          act[elemento.requerimiento.actividad.id_actividad] = [
+            { cosSolicitud: elemento.numSolicitud, Total: elemento.montoRef },
+          ];
           //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
           json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
           json["presupuesto"] = elemento.requerimiento.valorPresupuesto;
@@ -91,9 +92,12 @@ export default class POAvsSPrueba extends Component {
           json["montoReferencial"] = elemento.montoRef;
           results[elemento.requerimiento.actividad.id_actividad] = json;
         } else {
-          act[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
+          act[elemento.requerimiento.actividad.id_actividad].push({
+            cosSolicitud: elemento.numSolicitud,
+            Total: elemento.montoRef,
+          });
           //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
-          console.log(elemento.numSolicitud)
+          console.log(elemento.numSolicitud);
           results[elemento.requerimiento.actividad.id_actividad][
             "solicitud"
           ] += 1;
@@ -104,14 +108,13 @@ export default class POAvsSPrueba extends Component {
             "presupuesto"
           ] += elemento.requerimiento.valorPresupuesto;
         }
-        
       });
       this.setState({
         listaActividad: results,
-        numSolicitudes: act
+        numSolicitudes: act,
       });
       console.log(results);
-      console.log(this.state.numSolicitudes)
+      console.log(this.state.numSolicitudes);
     });
   };
 
@@ -123,7 +126,7 @@ export default class POAvsSPrueba extends Component {
     return (
       <>
         <Container style={{ background: "white", padding: "1%" }}>
-          <Table striped bordered hover>
+          <Table striped bordered hover id="table-to-xls">
             <Col>
               <thead className="fila-titulo" style={{ height: 50 }}>
                 <th>ActividadPoa</th>
@@ -135,62 +138,79 @@ export default class POAvsSPrueba extends Component {
                 <th>Detalles</th>
               </thead>
               <tbody>
-                {Object.values(this.state.listaActividad).map((elemento,index) => (
-                  <tr>
-                    <td>{elemento.actividad}</td>
-                    <td>{elemento.presupuesto}</td>
-                    <td>{elemento.unidad}</td>
-                    <td>{elemento.solicitud}</td>
-                    <td>{elemento.montoReferencial}</td>
-                    <td>
-                      {(parseInt(elemento.montoReferencial) * 100) /
-                        elemento.presupuesto +
-                        "%"}
-                    </td>
-                    <td>
-                      <Button
-                        variant="link"
-                        onClick={() => this.mostrarModalActualizar(index)}
-                      >
-                        <FcViewDetails size={32} />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                {Object.values(this.state.listaActividad).map(
+                  (elemento, index) => (
+                    <tr>
+                      <td>{elemento.actividad}</td>
+                      <td>${elemento.presupuesto}</td>
+                      <td>{elemento.unidad}</td>
+                      <td>{elemento.solicitud}</td>
+                      <td>${elemento.montoReferencial}</td>
+                      <td>
+                        {(
+                          (parseInt(elemento.montoReferencial) * 100) /
+                          elemento.presupuesto
+                        ).toFixed(2) + "%"}
+                      </td>
+                      <td>
+                        <Button
+                          variant="link"
+                          onClick={() => this.mostrarModalActualizar(index)}
+                        >
+                          <FcViewDetails size={32} />
+                        </Button>
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </Col>
           </Table>
+          <Row>
+            <Col>
+              <div align="center">
+                <ReactHTMLTableToExcel
+                  id="botonExportar"
+                  className="btn btn-success"
+                  table="table-to-xls"
+                  filename="POAvsSolicitud"
+                  sheet="Pagina1"
+                  buttonText="Descargar Excel"
+                ></ReactHTMLTableToExcel>
+              </div>
+            </Col>
+            <Col>
+              <Button variant="secondary">Descargar PDF</Button>
+            </Col>
+          </Row>
         </Container>
         <Modal show={this.state.modalActualizar}>
-          <ModalHeader
-            closeButton
-            onClick={() => this.cerrarModalActualizar()}
-          >
+          <ModalHeader closeButton onClick={() => this.cerrarModalActualizar()}>
             <ModalTitle>Detalle Solicitud</ModalTitle>
           </ModalHeader>
           <ModalBody>
             <Table striped bordered hover>
-            <thead className="fila-titulo" style={{ height: 50 }}>
-            <th>Codigo Solicitud</th>
-            <th>Monto Cotizacion Referencial</th>
-            </thead>
-            <tbody>
-            {parseInt(this.state.selActividad) >= 0?
-              Object.values(this.state.numSolicitudes)[this.state.selActividad].map((elemento) => (
-                <tr>
-                  <td>{elemento.cosSolicitud}</td>
-                  <td>{elemento.Total}</td>
-                </tr>
-              ))
-              :
-              <tr>
-                <td>No</td>
-                <td>Data</td>
-              </tr>
-              }
-            </tbody>
-           
-
+              <thead className="fila-titulo" style={{ height: 50 }}>
+                <th>Codigo Solicitud</th>
+                <th>Monto Cotizacion Referencial</th>
+              </thead>
+              <tbody>
+                {parseInt(this.state.selActividad) >= 0 ? (
+                  Object.values(this.state.numSolicitudes)[
+                    this.state.selActividad
+                  ].map((elemento) => (
+                    <tr>
+                      <td>{elemento.cosSolicitud}</td>
+                      <td>${elemento.Total}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td>No</td>
+                    <td>Data</td>
+                  </tr>
+                )}
+              </tbody>
             </Table>
           </ModalBody>
           <ModalFooter>

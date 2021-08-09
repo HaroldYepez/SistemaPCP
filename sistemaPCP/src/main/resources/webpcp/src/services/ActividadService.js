@@ -6,5 +6,6 @@ export class ActividadService{
         return axios.get(this.baseUrl+"all").then(res => res.data)
       
     }
+    
   
 }

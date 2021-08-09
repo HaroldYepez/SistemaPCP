@@ -20,6 +20,7 @@ import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
 import{CertificacionService} from "../services/CertificacionService";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 export default class POAvsCPrueba extends Component {
     constructor() {
         super();
@@ -106,7 +107,7 @@ export default class POAvsCPrueba extends Component {
         return (
           <>
           <Container style={{ background: "white", padding: "1%" }}>
-          <Table striped bordered hover>
+          <Table striped bordered hover id="table-to-xls">
             <Col>
               <thead className="fila-titulo" style={{ height: 50 }}>
                 <th>ActividadPoa</th>
@@ -121,13 +122,13 @@ export default class POAvsCPrueba extends Component {
                 {Object.values(this.state.listaCertificaciones).map((elemento,index) => (
                   <tr>
                     <td>{elemento.actividad}</td>
-                    <td>{elemento.presupuesto}</td>
+                    <td>${elemento.presupuesto}</td>
                     <td>{elemento.unidad}</td>
                     <td>{elemento.solicitud}</td>
-                    <td>{elemento.solicitudMonto}</td>
+                    <td>${elemento.solicitudMonto}</td>
                     <td>
-                      {(parseInt(elemento.solicitudMonto) * 100) /
-                        elemento.presupuesto +
+                      {((parseInt(elemento.solicitudMonto) * 100) /
+                        elemento.presupuesto).toFixed(2) +
                         "%"}
                     </td>
                     <td>
@@ -144,6 +145,23 @@ export default class POAvsCPrueba extends Component {
               
             </Col>
           </Table>
+          <Row>
+          <Col>
+          <div align="center">
+                <ReactHTMLTableToExcel
+                  id="botonExportar"
+                  className="btn btn-success"
+                  table="table-to-xls"
+                  filename="POAvsCertificado"
+                  sheet="Pagina1"
+                  buttonText="Descargar Excel"
+                ></ReactHTMLTableToExcel>
+              </div>
+          </Col>
+          <Col>
+          <Button variant="secondary" >Descargar PDF</Button>
+          </Col>
+          </Row>
         </Container>
         <Modal show={this.state.modalActualizar}>
           <ModalHeader
@@ -163,7 +181,7 @@ export default class POAvsCPrueba extends Component {
               Object.values(this.state.numSolicitudes)[this.state.selActividad].map((elemento) => (
                 <tr>
                   <td>{elemento.cosSolicitud}</td>
-                  <td>{elemento.Total}</td>
+                  <td>${elemento.Total}</td>
                 </tr>
               ))
               :

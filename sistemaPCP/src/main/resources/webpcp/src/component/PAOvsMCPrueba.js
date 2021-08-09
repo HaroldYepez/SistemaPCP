@@ -19,6 +19,7 @@ import { FcViewDetails } from "react-icons/fc";
 import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 
 export default class POAvsMCPrueba extends Component {
   constructor() {
@@ -100,7 +101,7 @@ export default class POAvsMCPrueba extends Component {
     return (
       <>
         <Container style={{ background: "white", padding: "1%" }}>
-          <Table striped bordered hover>
+          <Table striped bordered hover id="table-to-xls">
             <Col>
               <thead className="fila-titulo" style={{ height: 50 }}>
                 <th>ActividadPoa</th>
@@ -115,13 +116,13 @@ export default class POAvsMCPrueba extends Component {
                 {Object.values(this.state.listaActividad).map((elemento,index) => (
                   <tr>
                     <td>{elemento.actividad}</td>
-                    <td>{elemento.presupuesto}</td>
+                    <td>${elemento.presupuesto}</td>
                     <td>{elemento.unidad}</td>
                     <td>{elemento.solicitud}</td>
-                    <td>{elemento.montoContractual}</td>
+                    <td>${elemento.montoContractual}</td>
                     <td>
-                      {(parseInt(elemento.montoContractual) * 100) /
-                        elemento.presupuesto +
+                      {((parseInt(elemento.montoContractual) * 100) /
+                        elemento.presupuesto).toFixed(2) +
                         "%"}
                     </td>
                     <td>
@@ -137,6 +138,25 @@ export default class POAvsMCPrueba extends Component {
               </tbody>
             </Col>
           </Table>
+          <Row>
+          <Col>
+          <div align="center">
+                <ReactHTMLTableToExcel
+                  id="botonExportar"
+                  className="btn btn-success"
+                  table="table-to-xls"
+                  filename="POAvsMontoContractual"
+                  sheet="Pagina1"
+                  buttonText="Descargar Excel"
+                ></ReactHTMLTableToExcel>
+              </div>
+          </Col>
+          <Col>
+          <Button variant="secondary" >Descargar PDF</Button>
+          </Col>
+          </Row>
+          
+          
         </Container>
         <Modal show={this.state.modalActualizar}>
           <ModalHeader
@@ -156,7 +176,7 @@ export default class POAvsMCPrueba extends Component {
               Object.values(this.state.numSolicitudes)[this.state.selActividad].map((elemento) => (
                 <tr>
                   <td>{elemento.cosSolicitud}</td>
-                  <td>{elemento.Total}</td>
+                  <td>${elemento.Total}</td>
                 </tr>
               ))
               :
