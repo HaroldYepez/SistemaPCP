@@ -140,8 +140,7 @@ export default class POAvsSPrueba extends Component {
                 <th>Presupuesto Asignado</th>
                 <th>Unidad Requerimiento</th>
                 <th>Solicitud Asignada</th>
-                <th>Monto 
-                  Cotización Referencial</th>
+                <th>Monto Cotización Referencial</th>
                 <th>Porcentaje</th>
                 <th>Detalles</th>
               </thead>
