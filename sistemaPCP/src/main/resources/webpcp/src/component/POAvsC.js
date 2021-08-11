@@ -34,6 +34,8 @@ export default class POAvsCPrueba extends Component {
           modalActualizar: false,
           numSolicitudes:{},
           selActividad:"",
+          filtro: false,
+          filtroValue: "",
         };
         this.tramiteService = new TramiteService();
         this.actividadService = new ActividadService();
@@ -102,6 +104,17 @@ export default class POAvsCPrueba extends Component {
       componentDidMount() {
         this.getCertificaciones();
       }
+      filtroDatos = (Value) => {
+        if (Value == ""){
+          this.setState({
+            filtro: false,
+        });
+        }else{
+        this.setState({
+        filtro: true,
+        filtroValue: Value},
+        );}
+      }
     
       render() {
         return (
@@ -112,6 +125,12 @@ export default class POAvsCPrueba extends Component {
               placeholder="Buscar"
               aria-label="Buscar"
               aria-describedby="basic-addon1"
+              type="text"
+              onKeyPress={event => {
+                if (event.key === "Enter") {
+                  this.filtroDatos(event.target.value);
+                }
+              }}
             />
           </InputGroup>
           <Table striped bordered hover id="table-to-xls" width="10px" table-layout="fixed">
@@ -126,7 +145,9 @@ export default class POAvsCPrueba extends Component {
                 <th>Detalles</th>
               </thead>
               <tbody>
-                {Object.values(this.state.listaCertificaciones).map((elemento,index) => (
+                {this.state.filtro == true ? (
+                Object.values(this.state.listaCertificaciones).map((elemento,index) => (
+                  elemento.unidad == this.state.filtroValue ? (
                   <tr>
                     <td>{elemento.actividad}</td>
                     <td>${elemento.presupuesto}</td>
@@ -147,6 +168,34 @@ export default class POAvsCPrueba extends Component {
                       </Button>
                     </td>
                   </tr>
+                  ):(
+                    <tr>
+                    
+                  </tr>
+                  ))
+                )):(
+                  Object.values(this.state.listaCertificaciones).map((elemento,index) => (
+                    <tr>
+                      <td>{elemento.actividad}</td>
+                      <td>${elemento.presupuesto}</td>
+                      <td>{elemento.unidad}</td>
+                      <td>{elemento.solicitud}</td>
+                      <td>${elemento.solicitudMonto}</td>
+                      <td>
+                        {((parseInt(elemento.solicitudMonto) * 100) /
+                          elemento.presupuesto).toFixed(2) +
+                          "%"}
+                      </td>
+                      <td>
+                        <Button
+                          variant="link"
+                          onClick={() => this.mostrarModalActualizar(index)}
+                        >
+                          <FcViewDetails size={32} />
+                        </Button>
+                      </td>
+                    </tr>
+                  )
                 ))}
               </tbody>
               

@@ -34,6 +34,8 @@ export default class POAvsSPrueba extends Component {
       modalActualizar: false,
       numSolicitudes: {},
       selActividad: "",
+      filtro: false,
+      filtroValue: "",
     };
     this.tramiteService = new TramiteService();
     this.actividadService = new ActividadService();
@@ -122,15 +124,35 @@ export default class POAvsSPrueba extends Component {
     this.getActividades();
   }
 
+  filtroDatos = (Value) => {
+    if (Value == ""){
+      this.setState({
+        filtro: false,
+    });
+    }else{
+    this.setState({
+    filtro: true,
+    filtroValue: Value},
+    );}
+  }
+
   render() {
     return (
       <>
         <Container style={{ background: "white", padding: "1%", marginLeft: "15%" }}>
           <InputGroup className="mb-3"  size="sm" style={{ maxWidth: "300px", fontSizeAdjust: "12px" }}>
             <FormControl
+              type="text"
               placeholder="Buscar"
               aria-label="Buscar"
               aria-describedby="basic-addon1"
+              
+              onKeyPress={event => {
+                if (event.key === "Enter") {
+                  this.filtroDatos(event.target.value);
+                }
+              }}
+              
             />
           </InputGroup>
           <Table striped bordered hover id="table-to-xls" >
@@ -145,13 +167,17 @@ export default class POAvsSPrueba extends Component {
                 <th>Detalles</th>
               </thead>
               <tbody>
-                {Object.values(this.state.listaActividad).map(
+                {this.state.filtro == true ? (
+                  
+                Object.values(this.state.listaActividad).map(
                   (elemento, index) => (
+                    
+                    elemento.unidad == this.state.filtroValue ? (
                     <tr>
                       <td>{elemento.actividad}</td>
                       <td>${elemento.presupuesto}</td>
                       <td>{elemento.unidad}</td>
-                      <td>{elemento.solicitud}</td>
+                      <td>{this.state.filtro}</td>
                       <td>${elemento.montoReferencial}</td>
                       <td>
                         {(
@@ -168,6 +194,36 @@ export default class POAvsSPrueba extends Component {
                         </Button>
                       </td>
                     </tr>
+                  ):(
+                    <tr>
+                    
+                  </tr>
+                  ))
+                )):(
+                  Object.values(this.state.listaActividad).map(
+                    (elemento, index) => (
+                      <tr>
+                        <td>{elemento.actividad}</td>
+                        <td>${elemento.presupuesto}</td>
+                        <td>{elemento.unidad}</td>
+                        <td>{elemento.solicitud}</td>
+                        <td>${elemento.montoReferencial}</td>
+                        <td>
+                          {(
+                            (parseInt(elemento.montoReferencial) * 100) /
+                            elemento.presupuesto
+                          ).toFixed(2) + "%"}
+                        </td>
+                        <td>
+                          <Button
+                            variant="link"
+                            onClick={() => this.mostrarModalActualizar(index)}
+                          >
+                            <FcViewDetails size={32} />
+                          </Button>
+                        </td>
+                      </tr>
+                   )
                   )
                 )}
               </tbody>
