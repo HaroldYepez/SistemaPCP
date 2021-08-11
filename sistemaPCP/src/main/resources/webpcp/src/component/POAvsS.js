@@ -20,6 +20,8 @@ import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import {Bar} from "react-chartjs-2";
+
 
 export default class POAvsSPrueba extends Component {
   constructor() {
@@ -36,6 +38,10 @@ export default class POAvsSPrueba extends Component {
       selActividad: "",
       filtro: false,
       filtroValue: "",
+      datos: {},
+      modalGrafico: false,
+      listaUnidad: [],
+      
     };
     this.tramiteService = new TramiteService();
     this.actividadService = new ActividadService();
@@ -64,6 +70,10 @@ export default class POAvsSPrueba extends Component {
   cerrarModalActualizar = () => {
     this.setState({ modalActualizar: false });
   };
+
+  cerrarModalGrafico = () => {
+    this.setState({ modalGrafico: false });
+  };
   getDetalleSolicitud = () => {
     // console.log(Object.values(this.state.listaActividad.id_actividad))
     // this.solicitud.map((elemento) => (
@@ -79,6 +89,7 @@ export default class POAvsSPrueba extends Component {
       this.setState({ solicitud: data });
       console.log("aqui estoy guardando la lista solicitud");
       var results = {};
+      var paraGrafica = {};
       var act = {};
       data.map((elemento) => {
         if (results[elemento.requerimiento.actividad.id_actividad] == null) {
@@ -110,10 +121,30 @@ export default class POAvsSPrueba extends Component {
             "presupuesto"
           ] += elemento.requerimiento.valorPresupuesto;
         }
+        if (paraGrafica[elemento.unidad.id_unidad] == null) {
+          var temp = {};
+          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
+          temp["presupuesto"] = elemento.requerimiento.valorPresupuesto;
+          temp["montoReferencial"] = elemento.montoRef;
+          temp["siglas"]= elemento.unidad.siglas
+          paraGrafica[elemento.unidad.id_unidad] = temp;
+        } else {
+          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
+
+          paraGrafica[elemento.unidad.id_unidad][
+            "montoReferencial"
+          ] += elemento.montoRef;
+          paraGrafica[elemento.unidad.id_unidad][
+            "presupuesto"
+          ] += elemento.requerimiento.valorPresupuesto;
+        }
+
+        
       });
       this.setState({
         listaActividad: results,
         numSolicitudes: act,
+        listaUnidad: paraGrafica,
       });
       console.log(results);
       console.log(this.state.numSolicitudes);
@@ -136,28 +167,77 @@ export default class POAvsSPrueba extends Component {
     );}
   }
 
+  llenarDatos() {
+    var labels= [];
+    var datasets= [];
+    var dataPresu= {};
+    var datosPresu=[];
+    var dataMonto= {};
+    var datosMonto=[];
+    var dataSaldo= {};
+    var datosSaldo=[];
+    var datosgraf={};
+    Object.values(this.state.listaUnidad).map(
+      (elemento) => (
+        labels.push(elemento.siglas),
+        datosPresu.push(elemento.presupuesto),
+        datosMonto.push(elemento.montoReferencial),
+        datosSaldo.push(elemento.presupuesto - elemento.montoReferencial)
+      ));
+
+    dataPresu["data"] = datosPresu;
+    dataPresu["label"] = "Presupuesto";
+    dataPresu["backgroundColor"] = "#0164A1";
+
+    dataMonto["data"] = datosMonto;
+    dataMonto["label"]= "Monto Cotización Referencial";
+    dataMonto["backgroundColor"]= "#011D42";
+
+    dataSaldo["data"] = datosSaldo;
+    dataSaldo["label"]= "Saldo";
+    dataSaldo["backgroundColor"]= "#F8B82B";
+
+    datasets.push(dataPresu, dataMonto, dataSaldo);
+    datosgraf["labels"] = labels;
+    datosgraf["datasets"] = datasets; 
+    this.setState({
+      datos: datosgraf,
+      modalGrafico: true,
+    });
+  }
+
   render() {
+    
     return (
+      
       <>
         <Container style={{ background: "white", padding: "1%", marginLeft: "15%" }}>
-          <InputGroup className="mb-3"  size="sm" style={{ maxWidth: "300px", fontSizeAdjust: "12px" }}>
-            <FormControl
-              type="text"
-              placeholder="Buscar"
-              aria-label="Buscar"
-              aria-describedby="basic-addon1"
-              
-              onKeyPress={event => {
-                if (event.key === "Enter") {
-                  this.filtroDatos(event.target.value);
-                }
-              }}
-              
-            />
-          </InputGroup>
+          <Row>
+            <Col style={{ maxWidth: "150px", padding: "0%", paddingLeft: "1%"}}>
+              <InputGroup className="mb-3"  size="sm" style={{ maxWidth: "300px", fontSizeAdjust: "12px" }}>
+                <FormControl
+                  type="text"
+                  placeholder="Buscar Unidad"
+                  aria-label="Buscar"
+                  aria-describedby="basic-addon1"
+                  
+                  onKeyPress={event => {
+                    if (event.key === "Enter") {
+                      this.filtroDatos(event.target.value);
+                    }
+                  }}
+                  
+                />
+              </InputGroup>
+            </Col>
+            <Col style={{ maxWidth: "150px", padding: "0%", marginLeft: "59%"}}>
+              <Button style={{ background:"#011d42"}} variant="secondary" onClick={() => this.llenarDatos()}>Gráfica</Button>
+            </Col>
+          </Row>
+          
           <Table striped bordered hover id="table-to-xls" >
             <Col>
-              <thead className="fila-titulo" style={{ height: 50, fontWeight: "lighter" }}>
+              <thead className="fila-titulo" style={{ height: 50, fontWeight: "lighter", borderColor: "#011d42"}}>
                 <th>ActividadPoa</th>
                 <th>Presupuesto Asignado</th>
                 <th>Unidad Requerimiento</th>
@@ -177,7 +257,7 @@ export default class POAvsSPrueba extends Component {
                       <td>{elemento.actividad}</td>
                       <td>${elemento.presupuesto}</td>
                       <td>{elemento.unidad}</td>
-                      <td>{this.state.filtro}</td>
+                      <td>{elemento.solicitud}</td>
                       <td>${elemento.montoReferencial}</td>
                       <td>
                         {(
@@ -245,10 +325,11 @@ export default class POAvsSPrueba extends Component {
             <Col style={{ maxWidth: "150px", padding: "0%"}}>
               <Button variant="secondary">Descargar PDF</Button>
             </Col>
+            
           </Row>
         </Container>
         <Modal show={this.state.modalActualizar}>
-          <ModalHeader closeButton onClick={() => this.cerrarModalActualizar()}>
+          <ModalHeader>
             <ModalTitle>Detalle Solicitud</ModalTitle>
           </ModalHeader>
           <ModalBody>
@@ -280,6 +361,24 @@ export default class POAvsSPrueba extends Component {
             <Button
               variant="secondary"
               onClick={() => this.cerrarModalActualizar()}
+            >
+              Close
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <Modal show={this.state.modalGrafico}>
+          <ModalHeader>
+            <ModalTitle>Poa Vs Solicitud</ModalTitle>
+          </ModalHeader>
+          <ModalBody>
+            <Row>
+              <Bar data={this.state.datos}/>
+            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="secondary"
+              onClick={() => this.cerrarModalGrafico()}
             >
               Close
             </Button>
