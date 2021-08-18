@@ -4,14 +4,16 @@ import java.sql.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "solicitud")
 public class Solicitud {
     @Id
-    private Long numSolicitud;
+    private String numSolicitud;
     private Date fechaSolicitud;
     private Float montoRef;
     private Integer plazoCotizacionRef;
@@ -23,15 +25,15 @@ public class Solicitud {
     @JoinColumn(name = "id_requerimiento")
     private Requerimiento requerimiento;
 
-    @ManyToOne
+    @ManyToMany
     @JoinColumn(name = "numTramite")
-    private Tramite tramite;
+    private List<Tramite> tramite;
 
-    public Long getNumSolicitud() {
+    public String getNumSolicitud() {
         return numSolicitud;
     }
 
-    public void setNumSolicitud(Long numSolicitud) {
+    public void setNumSolicitud(String numSolicitud) {
         this.numSolicitud = numSolicitud;
     }
 
@@ -75,11 +77,11 @@ public class Solicitud {
         this.requerimiento = requerimiento;
     }
 
-    public Tramite getTramite() {
+    public List<Tramite> getTramite() {
         return tramite;
     }
 
-    public void setTramite(Tramite tramite) {
+    public void setTramite(List<Tramite> tramite) {
         this.tramite = tramite;
     }
 

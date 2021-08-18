@@ -18,15 +18,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "tramite")
 public class Tramite {
     @Id
-    private Long numTramite;
+    private String numTramite;
     private Float totalCotRef;
     private Date fechaAsignacion;
     @ManyToOne
-    @JoinColumn(name = "id_analista", nullable = false)
+    @JoinColumn(name = "id_analista")
     private Analista analista;
 
     @ManyToOne
-    @JoinColumn(name = "id_unidad", nullable = false)
+    @JoinColumn(name = "id_unidad")
     private Unidad unidad;
 
     @JsonIgnore
@@ -40,11 +40,11 @@ public class Tramite {
     private String tipoProcedimiento;
     private String objContratacion;
 
-    public Long getNumTramite() {
+    public String getNumTramite() {
         return numTramite;
     }
 
-    public void setNumTramite(Long numTramite) {
+    public void setNumTramite(String numTramite) {
         this.numTramite = numTramite;
     }
 

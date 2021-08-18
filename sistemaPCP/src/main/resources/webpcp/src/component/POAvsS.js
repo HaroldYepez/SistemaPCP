@@ -92,6 +92,8 @@ export default class POAvsSPrueba extends Component {
       var paraGrafica = {};
       var act = {};
       data.map((elemento) => {
+        var temp = elemento.requerimiento;
+		    if(temp != null){
         if (results[elemento.requerimiento.actividad.id_actividad] == null) {
           var json = {};
           act[elemento.requerimiento.actividad.id_actividad] = [
@@ -99,7 +101,7 @@ export default class POAvsSPrueba extends Component {
           ];
           //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
           json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
-          json["presupuesto"] = elemento.requerimiento.valorPresupuesto;
+          json["presupuesto"] = elemento.requerimiento.actividad.precTotal;
           json["unidad"] = elemento.unidad.siglas;
           json["solicitud"] = 1;
           json["montoReferencial"] = elemento.montoRef;
@@ -110,35 +112,22 @@ export default class POAvsSPrueba extends Component {
             Total: elemento.montoRef,
           });
           //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
-          console.log(elemento.numSolicitud);
-          results[elemento.requerimiento.actividad.id_actividad][
-            "solicitud"
-          ] += 1;
-          results[elemento.requerimiento.actividad.id_actividad][
-            "montoReferencial"
-          ] += elemento.montoRef;
-          results[elemento.requerimiento.actividad.id_actividad][
-            "presupuesto"
-          ] += elemento.requerimiento.valorPresupuesto;
+          
+          results[elemento.requerimiento.actividad.id_actividad]["solicitud"] += 1;
+          results[elemento.requerimiento.actividad.id_actividad]["montoReferencial"] += elemento.montoRef;
+          //results[elemento.requerimiento.actividad.id_actividad]["presupuesto"] += elemento.requerimiento.actividad.precTotal;
         }
         if (paraGrafica[elemento.unidad.id_unidad] == null) {
-          var temp = {};
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
-          temp["presupuesto"] = elemento.requerimiento.valorPresupuesto;
-          temp["montoReferencial"] = elemento.montoRef;
-          temp["siglas"]= elemento.unidad.siglas
-          paraGrafica[elemento.unidad.id_unidad] = temp;
+          var temp2 = {};
+          temp2["presupuesto"] = elemento.requerimiento.actividad.precTotal;
+          temp2["montoReferencial"] = elemento.montoRef;
+          temp2["siglas"]= elemento.unidad.siglas
+          paraGrafica[elemento.unidad.id_unidad] = temp2;
         } else {
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
-
-          paraGrafica[elemento.unidad.id_unidad][
-            "montoReferencial"
-          ] += elemento.montoRef;
-          paraGrafica[elemento.unidad.id_unidad][
-            "presupuesto"
-          ] += elemento.requerimiento.valorPresupuesto;
+          paraGrafica[elemento.unidad.id_unidad]["montoReferencial"] += elemento.montoRef;
+          paraGrafica[elemento.unidad.id_unidad]["presupuesto"] +=elemento.requerimiento.actividad.precTotal;
         }
-
+      }
         
       });
       this.setState({
@@ -177,6 +166,7 @@ export default class POAvsSPrueba extends Component {
     var dataSaldo= {};
     var datosSaldo=[];
     var datosgraf={};
+
     Object.values(this.state.listaUnidad).map(
       (elemento) => (
         labels.push(elemento.siglas),

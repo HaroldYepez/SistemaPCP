@@ -20,6 +20,7 @@ import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
 import{CertificacionService} from "../services/CertificacionService";
+import {Solicitud_TramiteService} from "../services/Solicitud_TramiteService";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import {Bar} from "react-chartjs-2";
 
@@ -30,6 +31,7 @@ export default class POAvsCPrueba extends Component {
         super();
         this.state = {
           tramite: [],
+          certificacion: [],
           actividad: [],
           unidad: [],
           solicitud: [],
@@ -50,6 +52,7 @@ export default class POAvsCPrueba extends Component {
         this.solicitudService = new SolicitudService();
         this.requerimientoSevice = new RequerimientoService();
         this.certificacionService=new CertificacionService();
+        this.solicitud_tramiteService= new Solicitud_TramiteService();
      
       }
       mostrarModalActualizar = (idActividad) => {
@@ -68,67 +71,81 @@ export default class POAvsCPrueba extends Component {
       };
 
       getCertificaciones = () => {
-        this.certificacionService.getAll().then((data) => {
-          this.solicitudService.getAll().then((data2) => {
-            var results = {};
-            var paraGrafica = {};
-            var act = {};
-            data.map((elemento1) => {
-                data2.map((elemento2) => {
-                  if (elemento2.tramite.numTramite == elemento1.tramite.numTramite) {
-                    if (
-                      results[elemento2.requerimiento.actividad.id_actividad] == null
-                    ) {
-                      var json = {};
-                      act[elemento2.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento1.noCertificacion,"Total":elemento1.total}];
-                      json["actividad"] = elemento2.requerimiento.actividad.descripcion_acti;
-                      json["presupuesto"] = elemento2.requerimiento.valorPresupuesto;
-                      json["unidad"] = elemento2.unidad.siglas;
-                      json["solicitud"] = 1;
-                      json["solicitudMonto"] = elemento1.total;
-                      results[elemento2.requerimiento.actividad.id_actividad] = json;
-                    }else {
-                        act[elemento2.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento1.noCertificacion,"Total":elemento1.total})
-                        results[elemento2.requerimiento.actividad.id_actividad][
-                            "solicitud"
-                          ] += 1;
-                        results[elemento2.requerimiento.actividad.id_actividad][
-                            "solicitudMonto"
-                          ] += elemento1.total;
-                        results[elemento2.requerimiento.actividad.id_actividad][
-                            "presupuesto"
-                          ] +=elemento2.requerimiento.valorPresupuesto;
-                    }
-                    if (paraGrafica[elemento2.unidad.id_unidad] == null) {
-                      var temp = {};
-                      //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
-                      temp["presupuesto"] = elemento2.requerimiento.valorPresupuesto;
-                      temp["montoReferencial"] = elemento1.total;
-                      temp["siglas"]= elemento2.unidad.siglas
-                      paraGrafica[elemento2.unidad.id_unidad] = temp;
-                    } else {
-                      //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
-            
-                      paraGrafica[elemento2.unidad.id_unidad][
-                        "montoReferencial"
-                      ] += elemento1.total;
-                      paraGrafica[elemento2.unidad.id_unidad][
-                        "presupuesto"
-                      ] += elemento2.requerimiento.valorPresupuesto;
-                    }
-                  }
-                  
-          
+        this.solicitud_tramiteService.getAll().then((data3) => {
+          this.certificacionService.getAll().then((data) => {
+            this.solicitudService.getAll().then((data2) => {
+              this.tramiteService.getAll().then((data4) =>{
+                //tramite
+                var temp = {};
+                data4.map((elemento) =>{
+                  var tram = {};
+                  tram["numTramite"] = elemento.numTramite;
+                  tram["montoContractual"] = elemento.montoContractual;
+                  temp[elemento.numTramite]= tram;
+                });
+                //solicitud
+                var temp2 = {};
+                data2.map((elemento2) =>{
+                  var soli = {};
+                  soli["numSolicitud"] = elemento2.numSolicitud;
+                  soli["montoRef"] = elemento2.montoRef;
+                  soli["unidad"] = elemento2.unidad;
+                  soli["requerimiento"] = elemento2.requerimiento;
+                  temp2[elemento2.numSolicitud] = soli;  
+                });
+                //certificacion
+                this.setState({tramite: temp});
+                this.setState({solicitud: temp2});
+                
+                var results = {};
+                var paraGrafica = {};
+                var act = {};
+                data.map((elemento) =>{
+                  data3.map((elemento3) => {
+                    var requerimiento = this.state.solicitud[elemento3.solicitud_num_solicitud]["requerimiento"];
+                    var unidad = this.state.solicitud[elemento3.solicitud_num_solicitud]["unidad"];
+                    if (elemento.tramite != null && requerimiento != null){
+                      
+                      if(elemento3.tramite_num_tramite == elemento.tramite.numTramite){
+                        if( results[requerimiento.actividad.id_actividad] == null){
+                          var json = {};
+                          act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.noCertificacion,"Total":elemento.total}];
+                          json["actividad"] = requerimiento.actividad.descripcion_acti;
+                          json["presupuesto"] = requerimiento.actividad.precTotal;
+                          json["unidad"] = unidad.siglas;
+                          json["solicitud"] = 1;
+                          json["solicitudMonto"] = elemento.total;
+                          results[requerimiento.actividad.id_actividad] = json;
+                        }else{
+                          //act[requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.noCertificacion,"Total":elemento.total})
+                          results[requerimiento.actividad.id_actividad]["solicitud"] += 1;
+                          results[requerimiento.actividad.id_actividad]["solicitudMonto"] += elemento.total;
+                        }
+                        if (paraGrafica[unidad.id_unidad] == null) {
+                          var temp = {};
+                          temp["presupuesto"] = requerimiento.actividad.precTotal;
+                          temp["montoReferencial"] = elemento.total;
+                          temp["siglas"]= unidad.siglas
+                          paraGrafica[unidad.id_unidad] = temp;
+                        } else {
+                          paraGrafica[unidad.id_unidad]["montoReferencial"] += elemento.total;
+                          paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;
+                        }
+                      }
+                    }      
+                  });
                 });
                 this.setState({
-                    listaCertificaciones: results,
-                    numSolicitudes: act,
-                    listaUnidad: paraGrafica,
-                  });
-                  console.log(results);
-                  console.log(this.state.numSolicitudes)
-              });
-           
+                  listaCertificaciones: results,
+                  numSolicitudes: act,
+                  listaUnidad: paraGrafica,
+                });
+                console.log(results);
+                console.log(this.state.numSolicitudes)
+              
+
+          });
+          });
           });
         });
 

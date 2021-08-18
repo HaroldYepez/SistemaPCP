@@ -5,6 +5,7 @@ import { TramiteService } from "../services/TramiteService";
 import { UnidadService } from "../services/UnidadService";
 import { ActividadService } from "../services/ActividadService";
 import { SolicitudService } from "../services/SolicitudService";
+import {Solicitud_TramiteService} from "../services/Solicitud_TramiteService";
 import { Col } from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
@@ -46,6 +47,7 @@ export default class POAvsMCPrueba extends Component {
     this.unidadService = new UnidadService();
     this.solicitudService = new SolicitudService();
     this.requerimientoSevice = new RequerimientoService();
+    this.solicitud_tramiteService= new Solicitud_TramiteService();
   }
   mostrarModalActualizar = (idActividad) => {
     this.setState({
@@ -60,69 +62,97 @@ export default class POAvsMCPrueba extends Component {
   cerrarModalGrafico = () => {
     this.setState({ modalGrafico: false });
   };
+
+  
   getMontoContractual = () => {
-    this.solicitudService.getAll().then((data) => {
-      this.setState({ solicitud: data });
-      console.log("aqui estoy guardando la lista solicitud");
+    this.solicitud_tramiteService.getAll().then((data3) => {
+      this.tramiteService.getAll().then((data) =>{  
+        this.solicitudService.getAll().then((data2) => {
+          
+            var temp2 = {};
+            data2.map((elemento2) =>{
+              //console.log(elemento2.numSolicitud)
+              var soli = {};
+              soli["numSolicitud"] = elemento2.numSolicitud;
+              soli["montoRef"] = elemento2.montoRef;
+              soli["unidad"] = elemento2.unidad;
+              soli["requerimiento"] = elemento2.requerimiento;
+              temp2[elemento2.numSolicitud] = soli;  
+            });
+            this.setState({solicitud: temp2});
+            //console.log(temp2)
+            //console.log(this.state.solicitud)
+        
+        var temp = {};
+        data.map((elemento) =>{
+          //console.log(elemento.numTramite)
+          //console.log(elemento.montoContractual)
+          var tram = {};
+          tram["numTramite"] = elemento.numTramite;
+          tram["montoContractual"] = elemento.montoContractual;
+          temp[elemento.numTramite]= tram;
+        });
+        this.setState({tramite: temp});
+        //console.log(temp)
+        //console.log(this.state.tramite)
+      
       var results = {};
       var paraGrafica = {};
       var act = {}
-      data.map((elemento) => {
-        if (results[elemento.requerimiento.actividad.id_actividad] == null) {
-          var json = {};
-          act[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.tramite.montoContractual}];
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
-          json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
-          json["presupuesto"] = elemento.requerimiento.valorPresupuesto;
-          json["unidad"] = elemento.unidad.siglas;
-          json["solicitud"] = 1;
-          json["montoContractual"] = elemento.tramite.montoContractual;
-          results[elemento.requerimiento.actividad.id_actividad] = json;
-        } else {
-          act[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.tramite.montoContractual})
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
-          console.log(elemento.numSolicitud)
-          results[elemento.requerimiento.actividad.id_actividad][
-            "solicitud"
-          ] += 1;
-          results[elemento.requerimiento.actividad.id_actividad][
-            "montoContractual"
-          ] += elemento.tramite.montoContractual;
-          results[elemento.requerimiento.actividad.id_actividad][
-            "presupuesto"
-          ] +=elemento.requerimiento.valorPresupuesto;
-        }
-        if (paraGrafica[elemento.unidad.id_unidad] == null) {
-          var temp = {};
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
-          temp["presupuesto"] = elemento.requerimiento.valorPresupuesto;
-          temp["montoReferencial"] = elemento.tramite.montoContractual;
-          temp["siglas"]= elemento.unidad.siglas
-          paraGrafica[elemento.unidad.id_unidad] = temp;
-        } else {
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
+      data3.map((elemento) => {
+        /*console.log(elemento.tramite_num_tramite)
+        console.log(elemento.solicitud_num_solicitud)
+        console.log(this.state.tramite[elemento.tramite_num_tramite]["numTramite"])
+        console.log(this.state.solicitud[elemento.solicitud_num_solicitud]["numSolicitud"])*/
 
-          paraGrafica[elemento.unidad.id_unidad][
-            "montoReferencial"
-          ] += elemento.tramite.montoContractual;
-          paraGrafica[elemento.unidad.id_unidad][
-            "presupuesto"
-          ] += elemento.requerimiento.valorPresupuesto;
+        var temp = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
+        if(temp != null){
+        console.log(this.state.solicitud[elemento.solicitud_num_solicitud]["numSolicitud"])
+        if (results[temp.actividad.id_actividad] == null) {
+          var json = {};
+          act[temp.actividad.id_actividad]=[{"cosSolicitud":elemento.solicitud_num_solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]}];
+          json["actividad"] = temp.actividad.descripcion_acti;
+          json["presupuesto"] = temp.actividad.precTotal;
+          json["unidad"] = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].siglas;
+          json["solicitud"] = 1;
+          json["montoContractual"] = this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
+          results[temp.actividad.id_actividad] = json;
+        } else {
+          act[temp.actividad.id_actividad].push({"cosSolicitud":elemento.solicitud_num_Solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]})
+          results[temp.actividad.id_actividad]["solicitud"] += 1;
+          results[temp.actividad.id_actividad]["montoContractual"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]; 
         }
-        
+        if (paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad] == null) {
+          var requerimiento = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
+          var temp = {};
+          //console.log(requerimiento)
+          temp["presupuesto"] = requerimiento.actividad.precTotal;;
+          temp["montoReferencial"] =this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
+          temp["siglas"]= this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].siglas
+          paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad] = temp;
+        } else {
+          paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad]["montoReferencial"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
+          paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad]["presupuesto"] += this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"].actividad.precTotal;;
+        }
+        }
       });
       this.setState({
         listaActividad: results,
         numSolicitudes: act,
         listaUnidad: paraGrafica,
       });
-      console.log(results);
-      console.log(this.state.numSolicitudes)
+      //console.log(results);
+      //console.log(this.state.numSolicitudes)
     });
+    });
+  });
+  
   };
 
   componentDidMount() {
     this.getMontoContractual();
+    
+    
   }
 
   filtroDatos = (Value) => {

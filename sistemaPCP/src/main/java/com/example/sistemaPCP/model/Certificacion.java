@@ -11,20 +11,20 @@ import javax.persistence.Table;
 @Table(name = "certificacion")
 public class Certificacion {
     @Id
-    private Long noCertificacion;
+    private String noCertificacion;
 
     @ManyToOne
-    @JoinColumn(name = "numTramite", nullable = false)
+    @JoinColumn(name = "numTramite")
     private Tramite tramite;
     private Integer partida;
     private Integer fuente;
     private Float total;
 
-    public Long getNoCertificacion() {
+    public String getNoCertificacion() {
         return noCertificacion;
     }
 
-    public void setNoCertificacion(Long noCertificacion) {
+    public void setNoCertificacion(String noCertificacion) {
         this.noCertificacion = noCertificacion;
     }
 

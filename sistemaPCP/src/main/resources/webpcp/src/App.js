@@ -8,6 +8,7 @@ import {BrowserRouter as Router , Switch, Route} from 'react-router-dom';
 import POAvsC from './component/POAvsC';
 import POAvsMC from './component/POAvsMC';
 import POAvsS from './component/POAvsS';
+import LlenarBD from './component/LlenarBD';
 import Inicio from './component/Inicio';
 import './component/NavigationBar.css';
 import './component/estilos.css';
@@ -26,6 +27,7 @@ export default class APP extends  Component{
   render(){
     return(
       <Router style={{ paddingBottom: '0%' }}>
+        
         <NavigationBar/>
         <Container className="container2" style={{textAlign: 'center', marginLeft: '0%',background: 'white', maxWidth: '100%' }} >
           <Row>
