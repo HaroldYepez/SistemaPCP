@@ -11,14 +11,19 @@ import javax.persistence.Table;
 @Table(name = "certificacion")
 public class Certificacion {
     @Id
+    private Integer oid;
     private String noCertificacion;
-
-    @ManyToOne
-    @JoinColumn(name = "numTramite")
-    private Tramite tramite;
     private Integer partida;
     private Integer fuente;
     private Float total;
+
+    public Integer getOid() {
+        return oid;
+    }
+
+    public void setOid(Integer oid) {
+        this.oid = oid;
+    }
 
     public String getNoCertificacion() {
         return noCertificacion;
@@ -26,14 +31,6 @@ public class Certificacion {
 
     public void setNoCertificacion(String noCertificacion) {
         this.noCertificacion = noCertificacion;
-    }
-
-    public Tramite getTramite() {
-        return tramite;
-    }
-
-    public void setTramite(Tramite tramite) {
-        this.tramite = tramite;
     }
 
     public Integer getPartida() {

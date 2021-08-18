@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import { Container } from "react-bootstrap";
 import { Row } from "react-bootstrap";
-import { TramiteService } from "../services/TramiteService";
-import { UnidadService } from "../services/UnidadService";
-import { ActividadService } from "../services/ActividadService";
-import { SolicitudService } from "../services/SolicitudService";
 import { Col } from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
@@ -19,8 +15,13 @@ import { FcViewDetails } from "react-icons/fc";
 import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
-import{CertificacionService} from "../services/CertificacionService";
+import {CertificacionService} from "../services/CertificacionService";
 import {Solicitud_TramiteService} from "../services/Solicitud_TramiteService";
+import {Solicitud_CertificacionService} from "../services/Solicitud_CertificacionService";
+import { TramiteService } from "../services/TramiteService";
+import { UnidadService } from "../services/UnidadService";
+import { ActividadService } from "../services/ActividadService";
+import { SolicitudService } from "../services/SolicitudService";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import {Bar} from "react-chartjs-2";
 
@@ -53,6 +54,7 @@ export default class POAvsCPrueba extends Component {
         this.requerimientoSevice = new RequerimientoService();
         this.certificacionService=new CertificacionService();
         this.solicitud_tramiteService= new Solicitud_TramiteService();
+        this.solicitud_certificacionService= new Solicitud_CertificacionService();
      
       }
       mostrarModalActualizar = (idActividad) => {
@@ -71,80 +73,77 @@ export default class POAvsCPrueba extends Component {
       };
 
       getCertificaciones = () => {
-        this.solicitud_tramiteService.getAll().then((data3) => {
+        this.solicitud_certificacionService.getAll().then((data3) => {
           this.certificacionService.getAll().then((data) => {
             this.solicitudService.getAll().then((data2) => {
-              this.tramiteService.getAll().then((data4) =>{
-                //tramite
-                var temp = {};
-                data4.map((elemento) =>{
-                  var tram = {};
-                  tram["numTramite"] = elemento.numTramite;
-                  tram["montoContractual"] = elemento.montoContractual;
-                  temp[elemento.numTramite]= tram;
-                });
+              //certificacion
+              var temp = {};
+              data.map((elemento) =>{
+                var cert = {};
+                cert["noCertificacion"] = elemento.noCertificacion;
+                cert["montoRef"] = elemento.total;
+                temp[elemento.oid] = cert;  
+              });
                 //solicitud
-                var temp2 = {};
-                data2.map((elemento2) =>{
-                  var soli = {};
-                  soli["numSolicitud"] = elemento2.numSolicitud;
-                  soli["montoRef"] = elemento2.montoRef;
-                  soli["unidad"] = elemento2.unidad;
-                  soli["requerimiento"] = elemento2.requerimiento;
-                  temp2[elemento2.numSolicitud] = soli;  
-                });
-                //certificacion
-                this.setState({tramite: temp});
-                this.setState({solicitud: temp2});
-                
-                var results = {};
-                var paraGrafica = {};
-                var act = {};
-                data.map((elemento) =>{
-                  data3.map((elemento3) => {
-                    var requerimiento = this.state.solicitud[elemento3.solicitud_num_solicitud]["requerimiento"];
-                    var unidad = this.state.solicitud[elemento3.solicitud_num_solicitud]["unidad"];
-                    if (elemento.tramite != null && requerimiento != null){
-                      
-                      if(elemento3.tramite_num_tramite == elemento.tramite.numTramite){
-                        if( results[requerimiento.actividad.id_actividad] == null){
-                          var json = {};
-                          act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.noCertificacion,"Total":elemento.total}];
-                          json["actividad"] = requerimiento.actividad.descripcion_acti;
-                          json["presupuesto"] = requerimiento.actividad.precTotal;
-                          json["unidad"] = unidad.siglas;
-                          json["solicitud"] = 1;
-                          json["solicitudMonto"] = elemento.total;
-                          results[requerimiento.actividad.id_actividad] = json;
-                        }else{
-                          //act[requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.noCertificacion,"Total":elemento.total})
-                          results[requerimiento.actividad.id_actividad]["solicitud"] += 1;
-                          results[requerimiento.actividad.id_actividad]["solicitudMonto"] += elemento.total;
-                        }
-                        if (paraGrafica[unidad.id_unidad] == null) {
-                          var temp = {};
-                          temp["presupuesto"] = requerimiento.actividad.precTotal;
-                          temp["montoReferencial"] = elemento.total;
-                          temp["siglas"]= unidad.siglas
-                          paraGrafica[unidad.id_unidad] = temp;
-                        } else {
-                          paraGrafica[unidad.id_unidad]["montoReferencial"] += elemento.total;
-                          paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;
-                        }
-                      }
-                    }      
-                  });
-                });
-                this.setState({
-                  listaCertificaciones: results,
-                  numSolicitudes: act,
-                  listaUnidad: paraGrafica,
-                });
-                console.log(results);
-                console.log(this.state.numSolicitudes)
+              var temp2 = {};
+              data2.map((elemento2) =>{
+                var soli = {};
+                soli["numSolicitud"] = elemento2.numSolicitud;
+                soli["montoRef"] = elemento2.montoRef;
+                soli["unidad"] = elemento2.unidad;
+                soli["requerimiento"] = elemento2.requerimiento;
+                temp2[elemento2.numSolicitud] = soli;  
+              });
+              this.setState({certificacion: temp});
+              this.setState({solicitud: temp2});
+              
+              var results = {};
+              var paraGrafica = {};
+              var act = {};
+              
+              data3.map((elemento3) => {
+                var requerimiento = this.state.solicitud[elemento3.solicitud_num_solicitud]["requerimiento"];
+                var unidad = this.state.solicitud[elemento3.solicitud_num_solicitud]["unidad"];
+                var certificacion = this.state.certificacion[elemento3.certificacion_oid]
+                if (certificacion["no_certificacion"] != null && requerimiento != null){
+
+                  if( results[requerimiento.actividad.id_actividad] == null){
+                    var json = {};
+                    act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":certificacion["no_certificacion"],"Total":certificacion["montoRef"]}];
+                    json["actividad"] = requerimiento.actividad.descripcion_acti;
+                    json["presupuesto"] = requerimiento.actividad.precTotal;
+                    json["unidad"] = unidad.siglas;
+                    json["solicitud"] = 1;
+                    json["solicitudMonto"] = certificacion["montoRef"];
+                    results[requerimiento.actividad.id_actividad] = json;
+                  }else{
+                    results[requerimiento.actividad.id_actividad]["solicitud"] += 1;
+                    results[requerimiento.actividad.id_actividad]["solicitudMonto"] += certificacion["montoRef"];
+                  }
+                  if (paraGrafica[unidad.id_unidad] == null) {
+                    var temp = {};
+                    temp["presupuesto"] = requerimiento.actividad.precTotal;
+                    temp["montoReferencial"] = certificacion["montoRef"];
+                    temp["siglas"]= unidad.siglas
+                    paraGrafica[unidad.id_unidad] = temp;
+                  } else {
+                    paraGrafica[unidad.id_unidad]["montoReferencial"] += certificacion["montoRef"];
+                    paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;
+                  }
+                  
+                }      
+              });
+              
+              this.setState({
+                listaCertificaciones: results,
+                numSolicitudes: act,
+                listaUnidad: paraGrafica,
+              });
+              console.log(results);
+              console.log(this.state.numSolicitudes)
               
 
-          });
+          
           });
           });
         });

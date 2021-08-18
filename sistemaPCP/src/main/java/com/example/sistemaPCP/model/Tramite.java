@@ -28,11 +28,6 @@ public class Tramite {
     @ManyToOne
     @JoinColumn(name = "id_unidad")
     private Unidad unidad;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "tramite")
-    private List<Certificacion> certificacion;
-
     private Float subtotal;
     private Float iva;
     private String tareaActual;
@@ -114,14 +109,6 @@ public class Tramite {
 
     public String getTipoProcedimiento() {
         return tipoProcedimiento;
-    }
-
-    public List<Certificacion> getCertificacion() {
-        return certificacion;
-    }
-
-    public void setCertificacion(List<Certificacion> certificacion) {
-        this.certificacion = certificacion;
     }
 
     public void setTipoProcedimiento(String tipoProcedimiento) {

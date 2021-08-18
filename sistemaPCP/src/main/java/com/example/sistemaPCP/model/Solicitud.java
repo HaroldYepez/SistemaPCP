@@ -29,6 +29,10 @@ public class Solicitud {
     @JoinColumn(name = "numTramite")
     private List<Tramite> tramite;
 
+    @ManyToMany
+    @JoinColumn(name = "noCertificacion")
+    private List<Certificacion> certificacion;
+
     public String getNumSolicitud() {
         return numSolicitud;
     }
