@@ -118,9 +118,11 @@ export default class POAvsMCPrueba extends Component {
           json["montoContractual"] = this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
           results[temp.actividad.id_actividad] = json;
         } else {
-          act[temp.actividad.id_actividad].push({"cosSolicitud":elemento.solicitud_num_Solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]})
-          results[temp.actividad.id_actividad]["solicitud"] += 1;
-          results[temp.actividad.id_actividad]["montoContractual"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]; 
+          if(act[temp.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
+            act[temp.actividad.id_actividad].push({"cosSolicitud":elemento.solicitud_num_Solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]})
+            results[temp.actividad.id_actividad]["solicitud"] += 1;
+            results[temp.actividad.id_actividad]["montoContractual"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]; 
+          }
         }
         if (paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad] == null) {
           var requerimiento = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];

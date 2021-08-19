@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 export class ActividadService{
-    baseUrl="/actividad/";
+    baseUrl="http://localhost:8080/api/actividad/";
     getAll(){
-        return axios.get('http://localhost:8080/api/actividad/'+"all").then(res => res.data)
+        return axios.get(this.baseUrl+"all").then(res => res.data)
       
     }
 

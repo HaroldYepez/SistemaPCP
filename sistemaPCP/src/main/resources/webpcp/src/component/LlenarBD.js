@@ -41,8 +41,8 @@ export default class LlenarBD extends Component {
                             act["id_actividad"] = elemento2.idactividad;
                             act["descripcion_acti"] = elemento2.actividad;
                             act["precTotal"] = elemento2.totalProyectado;
-                            this.actividadService.putAll(act);
-                            /*fetch('http://localhost:8080/api/actividad/save',{
+                            //this.actividadService.putAll(act);
+                            fetch('http://localhost:8080/api/actividad/save',{
                               method: 'PUT',
                               mode: 'cors',
                               credentials: 'same-origin',
@@ -51,7 +51,7 @@ export default class LlenarBD extends Component {
                               'Authorization': 'Basic ' + btoa('postgres:1234'),
                               },
                               body: JSON.stringify(act)
-                            })*/
+                            })
                             actividades[elemento2.idactividad] = act;
                             var temp = {};
                             temp["id_requerimiento"] = elemento2.idrequerimiento;
