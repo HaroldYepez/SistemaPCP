@@ -115,7 +115,11 @@ export default class POAvsMCPrueba extends Component {
           json["presupuesto"] = temp.actividad.precTotal;
           json["unidad"] = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].siglas;
           json["solicitud"] = 1;
-          json["montoContractual"] = this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
+          if (this.state.tramite[elemento.tramite_num_tramite]["montoContractual"] == null) {
+            json["montoContractual"] = 0;
+          }else{
+            json["montoContractual"] = this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
+          }
           results[temp.actividad.id_actividad] = json;
         } else {
           if(act[temp.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
@@ -153,8 +157,6 @@ export default class POAvsMCPrueba extends Component {
 
   componentDidMount() {
     this.getMontoContractual();
-    
-    
   }
 
   filtroDatos = (Value) => {

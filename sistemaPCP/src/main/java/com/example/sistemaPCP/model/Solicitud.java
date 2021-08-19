@@ -89,4 +89,12 @@ public class Solicitud {
         this.tramite = tramite;
     }
 
+    public List<Certificacion> getCertificacion() {
+        return certificacion;
+    }
+
+    public void setCertificacion(List<Certificacion> certificacion) {
+        this.certificacion = certificacion;
+    }
+
 }
