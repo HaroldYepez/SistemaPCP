@@ -49,26 +49,17 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<version>2.5.3</version>
 		</dependency>
+
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.12.1.GA</version>
 		</dependency> 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<version>2.1.6.RELEASE</version>
-			<optional>true</optional>
-		</dependency>
-		 
->>>>>>> 0eb0bf9cb2c7b0e3041e5cffbdec620d101f9728
 	</dependencies>
 
 	<build>
