@@ -79,11 +79,14 @@ export default class POAvsCPrueba extends Component {
               //certificacion
               var temp = {};
               data.map((elemento) =>{
+                
                 var cert = {};
                 cert["noCertificacion"] = elemento.noCertificacion;
                 cert["montoRef"] = elemento.total;
                 temp[elemento.oid] = cert;  
               });
+              this.setState({certificacion: temp});
+              
                 //solicitud
               var temp2 = {};
               data2.map((elemento2) =>{
@@ -94,7 +97,7 @@ export default class POAvsCPrueba extends Component {
                 soli["requerimiento"] = elemento2.requerimiento;
                 temp2[elemento2.numSolicitud] = soli;  
               });
-              this.setState({certificacion: temp});
+              
               this.setState({solicitud: temp2});
               
               var results = {};
@@ -104,12 +107,14 @@ export default class POAvsCPrueba extends Component {
               data3.map((elemento3) => {
                 var requerimiento = this.state.solicitud[elemento3.solicitud_num_solicitud]["requerimiento"];
                 var unidad = this.state.solicitud[elemento3.solicitud_num_solicitud]["unidad"];
-                var certificacion = this.state.certificacion[elemento3.certificacion_oid]
-                if (certificacion["no_certificacion"] != null && requerimiento != null){
-
+                var certificacion = this.state.certificacion[elemento3.certificacion_oid];
+                console.log("sol"+" "+this.state.solicitud[elemento3.solicitud_num_solicitud]["numSolicitud"])
+                console.log("req"+" "+requerimiento)
+                if (certificacion["noCertificacion"] != null && requerimiento != null){
+                  console.log(certificacion["noCertificacion"])
                   if( results[requerimiento.actividad.id_actividad] == null){
                     var json = {};
-                    act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":certificacion["no_certificacion"],"Total":certificacion["montoRef"]}];
+                    act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento3.solicitud_num_solicitud,"Total":certificacion["montoRef"]}];
                     json["actividad"] = requerimiento.actividad.descripcion_acti;
                     json["presupuesto"] = requerimiento.actividad.precTotal;
                     json["unidad"] = unidad.siglas;
