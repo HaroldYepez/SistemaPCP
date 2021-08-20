@@ -1,7 +1,6 @@
 package com.example.sistemaPCP.model;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -9,10 +8,18 @@ import javax.persistence.Table;
 @Table(name = "actividad")
 public class Actividad {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id_actividad;
     private String descripcion_acti;
     private float precTotal;
+
+    public Actividad(Long id_actividad, String descripcion_acti, float precTotal) {
+        this.id_actividad = id_actividad;
+        this.descripcion_acti = descripcion_acti;
+        this.precTotal = precTotal;
+    }
+
+    public Actividad() {
+    }
 
     public Long getId_actividad() {
         return id_actividad;
@@ -36,6 +43,12 @@ public class Actividad {
 
     public void setPrecTotal(float precTotal) {
         this.precTotal = precTotal;
+    }
+
+    @Override
+    public String toString() {
+        return "Actividad [descripcion_acti=" + descripcion_acti + ", id_actividad=" + id_actividad + ", precTotal="
+                + precTotal + "]";
     }
 
 }

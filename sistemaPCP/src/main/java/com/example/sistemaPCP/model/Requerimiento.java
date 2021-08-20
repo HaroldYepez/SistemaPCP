@@ -1,5 +1,6 @@
 package com.example.sistemaPCP.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,13 +13,23 @@ import javax.persistence.Table;
 @Table(name = "requerimiento")
 public class Requerimiento {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id_requerimiento;
+    @Column(length = 10485760)
     private String descripcion;
     private Float valorPresupuesto;
     @ManyToOne
     @JoinColumn(name = "id_actividad")
     private Actividad actividad;
+
+    public Requerimiento(Long id_requerimiento, String descripcion, Float valorPresupuesto, Actividad actividad) {
+        this.id_requerimiento = id_requerimiento;
+        this.descripcion = descripcion;
+        this.valorPresupuesto = valorPresupuesto;
+        this.actividad = actividad;
+    }
+
+    public Requerimiento() {
+    }
 
     public Long getId_requerimiento() {
         return id_requerimiento;
