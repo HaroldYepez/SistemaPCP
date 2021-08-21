@@ -108,10 +108,9 @@ export default class POAvsCPrueba extends Component {
                 var requerimiento = this.state.solicitud[elemento3.solicitud_num_solicitud]["requerimiento"];
                 var unidad = this.state.solicitud[elemento3.solicitud_num_solicitud]["unidad"];
                 var certificacion = this.state.certificacion[elemento3.certificacion_oid];
-                console.log("sol"+" "+this.state.solicitud[elemento3.solicitud_num_solicitud]["numSolicitud"])
-                console.log("req"+" "+requerimiento)
+                
                 if (certificacion["noCertificacion"] != null && requerimiento != null){
-                  console.log(certificacion["noCertificacion"])
+                  
                   if( results[requerimiento.actividad.id_actividad] == null){
                     var json = {};
                     act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento3.solicitud_num_solicitud,"Total":certificacion["montoRef"]}];
@@ -316,9 +315,7 @@ export default class POAvsCPrueba extends Component {
                 ></ReactHTMLTableToExcel>
               </div>
           </Col>
-          <Col style={{ maxWidth: "150px", padding: "0%"}}>
-          <Button variant="secondary" align="left">Descargar PDF</Button>
-          </Col>
+          
           </Row>
         </Container>
         <Modal show={this.state.modalActualizar}>

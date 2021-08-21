@@ -15,7 +15,7 @@ import javax.persistence.EmbeddedId;
 @Table(name = "solicitud_tramite")
 public class Solicitud_Tramite {
 
-    
+    @Id
     @Column(name = "solicitud_num_solicitud")
     public String solicitud_num_solicitud;
 

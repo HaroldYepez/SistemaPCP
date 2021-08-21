@@ -1,6 +1,10 @@
 package com.example.sistemaPCP;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 import com.example.sistemaPCP.Service.impl.ActividadServiceImpl;
 import com.example.sistemaPCP.Service.impl.RequerimientoServiceImpl;
@@ -18,8 +22,11 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class SistemaPcpApplication {
 
+	
+
 	public static void main(String[] args) {
 		// saveActividad();
+		Map<String,ArrayList<String>> actividades = new HashMap<String,ArrayList<String>>();
 		ConfigurableApplicationContext context = SpringApplication.run(SistemaPcpApplication.class);
 		ActividadServiceImpl repository = context.getBean(ActividadServiceImpl.class);
 		RequerimientoServiceImpl repository2 = context.getBean(RequerimientoServiceImpl.class);
@@ -28,10 +35,6 @@ public class SistemaPcpApplication {
 		String results = rest.getForObject(uri, String.class);
 		try {
 			JSONArray jsonarray = new JSONArray(results);
-			String cont = "";
-			float sum = Float.parseFloat(jsonarray.getJSONObject(0).getString("totalProyectado"));
-			// ArrayList<Float> act = new ArrayList<Float>();
-
 			for (int i = 0; i < jsonarray.length(); i++) {
 				JSONObject jsonobject = jsonarray.getJSONObject(i);
 				String id_actividad = jsonobject.getString("idactividad");
@@ -39,24 +42,32 @@ public class SistemaPcpApplication {
 				String prec_total = jsonobject.getString("totalProyectado");
 				String id_requerimiento = jsonobject.getString("idrequerimiento");
 				String requerimiento = jsonobject.getString("requerimiento");
-				if (!cont.equals(id_actividad)) {
-					// sum = Float.parseFloat(prec_total);
-					repository.save(new Actividad(Long.parseLong(id_actividad), descripcion_acti, sum));
-					cont = id_actividad;
-					sum = Float.parseFloat(jsonobject.getString("totalProyectado"));
+				if (actividades.get(id_actividad) == null) {
+					ArrayList<String> actividad = new ArrayList<String>();
+					actividad.add(descripcion_acti);
+					actividad.add(prec_total);
+					actividades.put(id_actividad,actividad);
+					//repository.save(new Actividad(Long.parseLong(id_actividad), descripcion_acti, sum));
 				} else {
-					sum += Float.parseFloat(jsonobject.getString("totalProyectado"));
-					System.out.println("esta repetido");
+					String montoActual = actividades.get(id_actividad).get(1);
+					Float montoNuevo = Float.parseFloat(montoActual) + Float.parseFloat(prec_total);
+					actividades.get(id_actividad).set(1, montoNuevo.toString());
+					
 
 				}
-				repository2.save(new Requerimiento(Long.parseLong(id_requerimiento), requerimiento,
+				/*repository2.save(new Requerimiento(Long.parseLong(id_requerimiento), requerimiento,
 						Float.parseFloat(jsonobject.getString("totalProyectado")),
-						new Actividad(Long.parseLong(id_actividad), descripcion_acti, sum)));
+						new Actividad(Long.parseLong(id_actividad), descripcion_acti, sum)));*/
 
 			}
 
 		} catch (JSONException err) {
 			System.out.println("Exception : " + err.toString());
+		}
+		for (Map.Entry<String, ArrayList<String>> entry : actividades.entrySet()) {
+			String key = entry.getKey();
+			Object val = entry.getValue();
+			System.out.println(key+val);
 		}
 
 		// repository.save(new Actividad((long) 12, "equipar Lapto", 12));

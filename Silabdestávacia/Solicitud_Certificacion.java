@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @Table(name = "solicitud_certificacion")
 public class Solicitud_Certificacion {
 
-    
+    @Id
     @Column(name = "solicitud_num_solicitud")
     public String solicitud_num_solicitud;
 

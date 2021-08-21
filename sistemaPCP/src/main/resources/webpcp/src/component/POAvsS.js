@@ -312,9 +312,6 @@ export default class POAvsSPrueba extends Component {
                 ></ReactHTMLTableToExcel>
               </div>
             </Col>
-            <Col style={{ maxWidth: "150px", padding: "0%"}}>
-              <Button variant="secondary">Descargar PDF</Button>
-            </Col>
             
           </Row>
         </Container>

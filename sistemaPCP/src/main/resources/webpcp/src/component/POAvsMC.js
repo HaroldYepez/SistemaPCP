@@ -100,19 +100,16 @@ export default class POAvsMCPrueba extends Component {
       var paraGrafica = {};
       var act = {}
       data3.map((elemento) => {
-        /*console.log(elemento.tramite_num_tramite)
-        console.log(elemento.solicitud_num_solicitud)
-        console.log(this.state.tramite[elemento.tramite_num_tramite]["numTramite"])
-        console.log(this.state.solicitud[elemento.solicitud_num_solicitud]["numSolicitud"])*/
-
-        var temp = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
-        if(temp != null){
+        var requerimiento = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
+        var unidad = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"];
+        var tramite = this.state.tramite[elemento.tramite_num_tramite];
+        if(requerimiento != null){
         console.log(this.state.solicitud[elemento.solicitud_num_solicitud]["numSolicitud"])
-        if (results[temp.actividad.id_actividad] == null) {
+        if (results[requerimiento.actividad.id_actividad] == null) {
           var json = {};
-          act[temp.actividad.id_actividad]=[{"cosSolicitud":elemento.solicitud_num_solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]}];
-          json["actividad"] = temp.actividad.descripcion_acti;
-          json["presupuesto"] = temp.actividad.precTotal;
+          act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.solicitud_num_solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]}];
+          json["actividad"] = requerimiento.actividad.descripcion_acti;
+          json["presupuesto"] = requerimiento.actividad.precTotal;
           json["unidad"] = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].siglas;
           json["solicitud"] = 1;
           if (this.state.tramite[elemento.tramite_num_tramite]["montoContractual"] == null) {
@@ -120,25 +117,25 @@ export default class POAvsMCPrueba extends Component {
           }else{
             json["montoContractual"] = this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
           }
-          results[temp.actividad.id_actividad] = json;
+          results[requerimiento.actividad.id_actividad] = json;
         } else {
-          if(act[temp.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
-            act[temp.actividad.id_actividad].push({"cosSolicitud":elemento.solicitud_num_Solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]})
-            results[temp.actividad.id_actividad]["solicitud"] += 1;
-            results[temp.actividad.id_actividad]["montoContractual"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]; 
+          if(act[requerimiento.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
+            act[requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.solicitud_num_Solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]})
+            results[requerimiento.actividad.id_actividad]["solicitud"] += 1;
+            results[requerimiento.actividad.id_actividad]["montoContractual"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]; 
           }
         }
-        if (paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad] == null) {
-          var requerimiento = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
-          var temp = {};
-          //console.log(requerimiento)
-          temp["presupuesto"] = requerimiento.actividad.precTotal;;
-          temp["montoReferencial"] =this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
-          temp["siglas"]= this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].siglas
-          paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad] = temp;
+        if (paraGrafica[unidad.id_unidad] == null) {
+          var temp2 = {};
+          temp2["presupuesto"] = requerimiento.actividad.precTotal;;
+          temp2["montoReferencial"] = tramite["montoContractual"];
+          temp2["siglas"]= unidad.siglas
+          paraGrafica[unidad.id_unidad] = temp2;
         } else {
-          paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad]["montoReferencial"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
-          paraGrafica[this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].id_unidad]["presupuesto"] += this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"].actividad.precTotal;;
+          if(act[requerimiento.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
+            paraGrafica[unidad.id_unidad]["montoReferencial"] += tramite["montoContractual"];
+            paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;;
+          }
         }
         }
       });
@@ -316,9 +313,7 @@ export default class POAvsMCPrueba extends Component {
                 ></ReactHTMLTableToExcel>
               </div>
           </Col>
-          <Col style={{ maxWidth: "150px", padding: "0%"}}>
-          <Button variant="secondary" >Descargar PDF</Button>
-          </Col>
+          
           </Row>
           
           
