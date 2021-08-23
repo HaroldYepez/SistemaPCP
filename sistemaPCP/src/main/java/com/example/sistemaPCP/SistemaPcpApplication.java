@@ -22,11 +22,9 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class SistemaPcpApplication {
 
-	
-
 	public static void main(String[] args) {
 		// saveActividad();
-		Map<String,ArrayList<String>> actividades = new HashMap<String,ArrayList<String>>();
+		Map<String, ArrayList<String>> actividades = new HashMap<String, ArrayList<String>>();
 		ConfigurableApplicationContext context = SpringApplication.run(SistemaPcpApplication.class);
 		ActividadServiceImpl repository = context.getBean(ActividadServiceImpl.class);
 		RequerimientoServiceImpl repository2 = context.getBean(RequerimientoServiceImpl.class);
@@ -46,18 +44,19 @@ public class SistemaPcpApplication {
 					ArrayList<String> actividad = new ArrayList<String>();
 					actividad.add(descripcion_acti);
 					actividad.add(prec_total);
-					actividades.put(id_actividad,actividad);
-					//repository.save(new Actividad(Long.parseLong(id_actividad), descripcion_acti, sum));
+					actividades.put(id_actividad, actividad);
+					// repository.save(new Actividad(Long.parseLong(id_actividad), descripcion_acti,
+					// sum));
 				} else {
 					String montoActual = actividades.get(id_actividad).get(1);
 					Float montoNuevo = Float.parseFloat(montoActual) + Float.parseFloat(prec_total);
 					actividades.get(id_actividad).set(1, montoNuevo.toString());
-					
 
 				}
-				/*repository2.save(new Requerimiento(Long.parseLong(id_requerimiento), requerimiento,
+
+				repository2.save(new Requerimiento(Long.parseLong(id_requerimiento), requerimiento,
 						Float.parseFloat(jsonobject.getString("totalProyectado")),
-						new Actividad(Long.parseLong(id_actividad), descripcion_acti, sum)));*/
+						new Actividad(Long.parseLong(id_actividad), descripcion_acti, Float.parseFloat(prec_total))));
 
 			}
 
@@ -66,8 +65,10 @@ public class SistemaPcpApplication {
 		}
 		for (Map.Entry<String, ArrayList<String>> entry : actividades.entrySet()) {
 			String key = entry.getKey();
-			Object val = entry.getValue();
-			System.out.println(key+val);
+			String val = entry.getValue().get(1);
+			String val2 = entry.getValue().get(0).toString();
+			// System.out.println(key + "$" + val);
+			repository.save(new Actividad(Long.parseLong(key), val2, Float.parseFloat(val)));
 		}
 
 		// repository.save(new Actividad((long) 12, "equipar Lapto", 12));
@@ -110,4 +111,3 @@ public class SistemaPcpApplication {
 	// }
 
 }
-
