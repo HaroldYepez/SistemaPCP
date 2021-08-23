@@ -1,10 +1,7 @@
 package com.example.sistemaPCP.model;
 
-import java.util.UUID;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;

@@ -1,5 +1,6 @@
 package com.example.sistemaPCP.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -9,6 +10,8 @@ import javax.persistence.Table;
 public class Actividad {
     @Id
     private Long id_actividad;
+    
+    @Column(length=10485760)
     private String descripcion_acti;
     private float precTotal;
 

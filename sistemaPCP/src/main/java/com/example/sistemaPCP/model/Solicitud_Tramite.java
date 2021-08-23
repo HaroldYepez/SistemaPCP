@@ -1,16 +1,12 @@
 package com.example.sistemaPCP.model;
 
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
 
-
-@Embeddable
 @Entity
 @Table(name = "solicitud_tramite")
 public class Solicitud_Tramite {
