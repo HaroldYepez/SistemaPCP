@@ -1,0 +1,119 @@
+alter table public.solicitud_certificacion drop constraint 	solicitud_certificacion_pkey;
+ALTER TABLE public.solicitud_certificacion ALTER COLUMN solicitud_num_solicitud DROP NOT NULL;
+alter table public.solicitud_tramite drop constraint solicitud_tramite_pkey;
+ALTER TABLE public.solicitud_tramite ALTER COLUMN solicitud_num_solicitud DROP NOT NULL;
+
+--TRAMITE-----------------
+insert into tramite(num_tramite, 
+					fecha_asignacion,
+					monto_contractual,
+					obj_contratacion,
+					id_analista
+					)
+select numerodecontrato,
+fecha_elaboracioncontrato,
+ec_montoadjudicacionsiniva,
+ec_tipoadjudicacion,
+oid_usuario_verificador_contra
+from dblink('dbname=adquisicionesdb host=localhost user=postgres password=1234',
+            'select numerodecontrato,
+			fecha_elaboracioncontrato,
+			ec_montoadjudicacionsiniva,
+			ec_tipoadjudicacion,
+			oid_usuario_verificador_contra		
+			from contrato WHERE numerodecontrato IS NOT NULL')
+       as t1(numerodecontrato character varying(255),
+			 fecha_elaboracioncontrato date,
+			 ec_montoadjudicacionsiniva real,
+			 ec_tipoadjudicacion character varying(255),
+			 oid_usuario_verificador_contra integer
+			);
+
+--UNIDAD------------------------------
+insert into unidad(id_unidad, nombre, siglas)
+select idunidad,
+nombreunidad,
+codacad
+from dblink('dbname=adquisicionesdb host=localhost user=postgres password=1234',
+            'select idunidad,
+			nombreunidad,
+			codacad
+			from tblpacunidad WHERE idunidad IS NOT NULL')
+       as t1(idunidad integer,
+			 nombreunidad character varying(255),
+			 codacad character varying(255)
+			);
+
+--SOLICITUD-------------------------
+insert into solicitud(num_solicitud, 
+					fecha_solicitud, 
+					monto_ref, 
+					id_unidad
+					)
+select no_solicitud,
+fecha,
+oidnew_presupuesto,
+unidad
+from dblink('dbname=adquisicionesdb host=localhost user=postgres password=1234',
+            'select no_solicitud,
+			fecha,
+			oidnew_presupuesto,
+			unidad
+			from solicitud_de_compra WHERE no_solicitud IS NOT NULL')
+       as t1(no_solicitud character varying(255),
+			 fecha date,
+			 oidnew_presupuesto integer,
+			 unidad integer
+			)
+			Where no_solicitud NOT LIKE 'TEMP%' ;
+			
+--Solicitud_tramite-----
+insert into solicitud_tramite(solicitud_num_solicitud, 
+					tramite_num_tramite
+					)
+select no_solicitud,
+numerodecontrato
+from dblink('dbname=adquisicionesdb host=localhost user=postgres password=1234',
+            'select no_solicitud,
+			numerodecontrato
+			from contrato, solicitud_de_compra_solicitude, solicitud_de_compra
+			WHERE contrato.solicitudes_agrupadas_oid = solicitud_de_compra_solicitude.solicitudes_agrupadas_oid ')
+       as t1(no_solicitud character varying(255),
+			 numerodecontrato character varying(255)
+			)
+			Where no_solicitud NOT LIKE 'TEMP%' ;
+			
+--CERTIFICACIÓN---------------
+insert into certificacion(oid,no_certificacion, 
+					total  
+					)
+select oid,no_certificacion,
+valor_certifcacion
+from dblink('dbname=adquisicionesdb host=localhost user=postgres password=1234',
+            'select oid,no_certificacion,
+			valor_certifcacion
+			from certificado 
+			WHERE certificado.oid is not null')
+       as t1(oid integer,
+		   no_certificacion character varying(255),
+			 valor_certifcacion real
+			);
+
+--solicitud_certificacion
+insert into solicitud_certificacion(solicitud_num_solicitud, 
+					certificacion_oid
+					)
+select no_solicitud,
+oid
+from dblink('dbname=adquisicionesdb host=localhost user=postgres password=1234',
+            'select no_solicitud,
+			certificado.oid
+			from solicitud_de_compra, certificado
+			WHERE certificado.solicitudes_agrupadas_oid = solicitud_de_compra.solicitudes_agrupadas_oid ')
+       as t1(no_solicitud character varying(255),
+			 oid integer
+			)Where no_solicitud NOT LIKE 'TEMP%';
+			
+--Datos de prueba actividad----
+
+
