@@ -41,6 +41,7 @@ export default class POAvsSPrueba extends Component {
       datos: {},
       modalGrafico: false,
       listaUnidad: [],
+      selUnidad: "",
       
       
     };
@@ -58,15 +59,16 @@ export default class POAvsSPrueba extends Component {
   //   this.setState({ modalActualizar: true });
 
   // };
-  mostrarModalActualizar = (idActividad) => {
+  mostrarModalActualizar = (elemento) => {
     this.setState({
-      selActividad: idActividad,
+      selActividad: elemento.id_actividad,
+      selUnidad: elemento.unidad,
       modalActualizar: true,
     });
     //  this.setState((idActividad) => ({
     //   selActividad: idActividad
     // }));
-    console.log("este dato pase aqui" + this.state.selActividad);
+    
   };
   cerrarModalActualizar = () => {
     this.setState({ modalActualizar: false });
@@ -84,7 +86,7 @@ export default class POAvsSPrueba extends Component {
   getActividades = () => {
     this.unidadService.getAll().then((data) => {
       this.setState({ unidad: data });
-      console.log("aqui estoy guardando la lista unidad");
+      
     });
     this.solicitudService.getAll().then((data) => {
       this.setState({ solicitud: data });
@@ -92,40 +94,82 @@ export default class POAvsSPrueba extends Component {
       var results = {};
       var paraGrafica = {};
       var act = {};
+      var indice = 0;
+      var indice2 = 0;
+      var flag = false;
       data.map((elemento) => {
         var temp = elemento.requerimiento;
+        
 		    if(temp != null){
-        if (results[elemento.requerimiento.actividad.id_actividad] == null) {
-          var json = {};
-          act[elemento.requerimiento.actividad.id_actividad] = [
-            { cosSolicitud: elemento.numSolicitud, Total: elemento.montoRef },
-          ];
-          json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
-          json["presupuesto"] = elemento.requerimiento.actividad.precTotal;
-          json["unidad"] = elemento.unidad.siglas;
-          json["solicitud"] = 1;
-          json["montoReferencial"] = elemento.montoRef;
-          results[elemento.requerimiento.actividad.id_actividad] = json;
-        } else {
-          act[elemento.requerimiento.actividad.id_actividad].push({
-            cosSolicitud: elemento.numSolicitud,
-            Total: elemento.montoRef,
-          });
+          var id_acti = elemento.requerimiento.actividad.id_actividad;
           
-          results[elemento.requerimiento.actividad.id_actividad]["solicitud"] += 1;
-          results[elemento.requerimiento.actividad.id_actividad]["montoReferencial"] += elemento.montoRef;
+          Object.values(results).map((elem) =>{
+            if(elem != null){
+            if (elem["id_actividad"] == id_acti && elem["unidad"] == elemento.unidad.siglas) {
+              
+              var solici = {};
+              solici["id_actividad"] = elemento.requerimiento.actividad.id_actividad;
+              solici["numSolicitud"] = elemento.numSolicitud;
+              if(elemento.montoRef == null){
+                solici["monto"] = 0;
+              }else{
+                solici["monto"] = elemento.montoRef;
+              }
+              solici["unidad"] = elemento.unidad.siglas;
+              act[indice2] = solici;
+              indice2+=1;
+              elem["solicitud"] += 1;
+              elem["montoReferencial"] += elemento.montoRef;
+              flag = true;
+            }
+            }
+          });
+          if (flag == false){
+            console.log(id_acti);
+            var json = {};
+            var solici = {};
+            solici["id_actividad"] = elemento.requerimiento.actividad.id_actividad;
+            solici["numSolicitud"] = elemento.numSolicitud;
+            
+            solici["unidad"] = elemento.unidad.siglas;
+            
+            json["id_actividad"] = elemento.requerimiento.actividad.id_actividad;
+            json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
+            json["presupuesto"] = elemento.requerimiento.actividad.precTotal;
+            json["unidad"] = elemento.unidad.siglas;
+            json["solicitud"] = 1;
+            if(elemento.montoRef == null){
+              json["montoReferencial"] = 0;
+              solici["monto"] = 0;
+            }else{
+              json["montoReferencial"] = elemento.montoRef;
+              solici["monto"] = elemento.montoRef;
+            }
+            act[indice2] = solici;
+            results[indice] = json;
+            indice += 1;
+            indice2 += 1;
+          }
+          flag = false;
+          if (paraGrafica[elemento.unidad.id_unidad] == null) {
+            var temp2 = {};
+            var actividades = {};
+            actividades[elemento.requerimiento.actividad.id_actividad] = elemento.requerimiento.actividad.precTotal;
+            temp2["actividades"] = actividades;
+            temp2["presupuesto"] = elemento.requerimiento.actividad.precTotal;
+            temp2["montoReferencial"] = elemento.montoRef;
+            temp2["siglas"]= elemento.unidad.siglas
+            paraGrafica[elemento.unidad.id_unidad] = temp2;
+          } else {
+            if (paraGrafica[elemento.unidad.id_unidad]["actividades"][elemento.requerimiento.actividad.id_actividad]){
+              paraGrafica[elemento.unidad.id_unidad]["montoReferencial"] += elemento.montoRef;
+            }else{
+              paraGrafica[elemento.unidad.id_unidad]["montoReferencial"] += elemento.montoRef;
+              paraGrafica[elemento.unidad.id_unidad]["presupuesto"] +=elemento.requerimiento.actividad.precTotal;
+          
+            }
+          }
         }
-        if (paraGrafica[elemento.unidad.id_unidad] == null) {
-          var temp2 = {};
-          temp2["presupuesto"] = elemento.requerimiento.actividad.precTotal;
-          temp2["montoReferencial"] = elemento.montoRef;
-          temp2["siglas"]= elemento.unidad.siglas
-          paraGrafica[elemento.unidad.id_unidad] = temp2;
-        } else {
-          paraGrafica[elemento.unidad.id_unidad]["montoReferencial"] += elemento.montoRef;
-          paraGrafica[elemento.unidad.id_unidad]["presupuesto"] +=elemento.requerimiento.actividad.precTotal;
-        }
-      }
         
       });
       this.setState({
@@ -256,7 +300,7 @@ export default class POAvsSPrueba extends Component {
                       <td>
                         <Button
                           variant="link"
-                          onClick={() => this.mostrarModalActualizar(index)}
+                          onClick={() => this.mostrarModalActualizar(elemento)}
                         >
                           <FcViewDetails size={32} />
                         </Button>
@@ -285,7 +329,7 @@ export default class POAvsSPrueba extends Component {
                         <td>
                           <Button
                             variant="link"
-                            onClick={() => this.mostrarModalActualizar(index)}
+                            onClick={() => this.mostrarModalActualizar(elemento)}
                           >
                             <FcViewDetails size={32} />
                           </Button>
@@ -325,13 +369,16 @@ export default class POAvsSPrueba extends Component {
               </thead>
               <tbody>
                 {parseInt(this.state.selActividad) >= 0 ? (
-                  Object.values(this.state.numSolicitudes)[
-                    this.state.selActividad
-                  ].map((elemento) => (
+                  Object.values(this.state.numSolicitudes).map((elemento) => (
+                    elemento.id_actividad == parseInt(this.state.selActividad) & elemento.unidad == this.state.selUnidad ? (
                     <tr>
-                      <td>{elemento.cosSolicitud}</td>
-                      <td>${elemento.Total}</td>
+                      <td>{elemento.numSolicitud}</td>
+                      <td>${elemento.monto}</td>
                     </tr>
+                    ):(
+                      <tr></tr>
+                    )
+                    
                   ))
                 ) : (
                   <tr>

@@ -116,4 +116,3 @@ from dblink('dbname=adquisicionesdb host=localhost user=postgres password=1234',
 			
 --Datos de prueba actividad----
 
-

@@ -6,7 +6,7 @@ import './estilos.css';
 class Footer extends React.Component{
     render(){
         return(
-            <footer class="footer-copyright text-center py-3" style={{backgroundColor: "#a3a3a3", position: "absolute", bottom: "0", width: "100%", textAlign: "center"}}>
+            <footer class="footer-copyright text-center py-3" style={{backgroundColor: "#a3a3a3", bottom: "0", width: "100%", textAlign: "center"}}>
                 <div>
                 <h1 className="footer-text">Escuela Superior Politécnica del Litoral - Campus Gustavo Galindo - Guayaquil - Ecuador</h1>
                 <h1 className="footer-text">© El contenido de esta obra es de propiedad intelectual de la ESPOL. Todos los derechos reservados. Prohibida su reproducción total o parcial,</h1>
