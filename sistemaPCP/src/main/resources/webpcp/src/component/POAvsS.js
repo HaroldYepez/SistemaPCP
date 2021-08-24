@@ -42,6 +42,7 @@ export default class POAvsSPrueba extends Component {
       modalGrafico: false,
       listaUnidad: [],
       
+      
     };
     this.tramiteService = new TramiteService();
     this.actividadService = new ActividadService();
@@ -99,7 +100,6 @@ export default class POAvsSPrueba extends Component {
           act[elemento.requerimiento.actividad.id_actividad] = [
             { cosSolicitud: elemento.numSolicitud, Total: elemento.montoRef },
           ];
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef}];
           json["actividad"] = elemento.requerimiento.actividad.descripcion_acti;
           json["presupuesto"] = elemento.requerimiento.actividad.precTotal;
           json["unidad"] = elemento.unidad.siglas;
@@ -111,11 +111,9 @@ export default class POAvsSPrueba extends Component {
             cosSolicitud: elemento.numSolicitud,
             Total: elemento.montoRef,
           });
-          //this.state.numSolicitudes[elemento.requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.numSolicitud,"Total":elemento.montoRef})
           
           results[elemento.requerimiento.actividad.id_actividad]["solicitud"] += 1;
           results[elemento.requerimiento.actividad.id_actividad]["montoReferencial"] += elemento.montoRef;
-          //results[elemento.requerimiento.actividad.id_actividad]["presupuesto"] += elemento.requerimiento.actividad.precTotal;
         }
         if (paraGrafica[elemento.unidad.id_unidad] == null) {
           var temp2 = {};
@@ -201,7 +199,7 @@ export default class POAvsSPrueba extends Component {
     return (
       
       <>
-        <Container style={{ background: "white", padding: "1%", marginLeft: "15%" }}>
+        <Container style={{ background: "white", padding: "1%", textAlign: "center" }}>
           <Row>
             <Col style={{ maxWidth: "150px", padding: "0%", paddingLeft: "1%"}}>
               <InputGroup className="mb-3"  size="sm" style={{ maxWidth: "300px", fontSizeAdjust: "12px" }}>
@@ -228,7 +226,7 @@ export default class POAvsSPrueba extends Component {
           <Table striped bordered hover id="table-to-xls" >
             <Col>
               <thead className="fila-titulo" style={{ height: 50, fontWeight: "lighter", borderColor: "#011d42"}}>
-                <th>ActividadPoa</th>
+                <th width="20%">ActividadPoa</th>
                 <th>Presupuesto Asignado</th>
                 <th>Unidad Requerimiento</th>
                 <th>Solicitud Asignada</th>
@@ -353,7 +351,7 @@ export default class POAvsSPrueba extends Component {
             </Button>
           </ModalFooter>
         </Modal>
-        <Modal show={this.state.modalGrafico}>
+        <Modal show={this.state.modalGrafico} fullscreen='true' dialogClassName="modal-90w" size='xl'>
           <ModalHeader>
             <ModalTitle>Poa Vs Solicitud</ModalTitle>
           </ModalHeader>

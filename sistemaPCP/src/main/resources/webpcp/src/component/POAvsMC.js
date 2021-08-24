@@ -210,7 +210,7 @@ export default class POAvsMCPrueba extends Component {
   render() {
     return (
       <>
-        <Container style={{ background: "white", padding: "1%", marginLeft: "15%" }}>
+        <Container style={{ background: "white", padding: "1%", textAlign: "center"  }}>
         <Row>
             <Col style={{ maxWidth: "150px", padding: "0%", paddingLeft: "1%"}}>
               <InputGroup className="mb-3"  size="sm" style={{ maxWidth: "300px", fontSizeAdjust: "12px" }}>
@@ -236,7 +236,7 @@ export default class POAvsMCPrueba extends Component {
           <Table striped bordered hover id="table-to-xls">
             <Col>
               <thead className="fila-titulo" style={{ height: 50 , borderColor: "#011d42" }}>
-                <th>ActividadPoa</th>
+                <th width="20%">ActividadPoa</th>
                 <th>Presupuesto Asignado</th>
                 <th>Unidad Requerimiento</th>
                 <th>Solicitud Asignada</th>
@@ -359,7 +359,7 @@ export default class POAvsMCPrueba extends Component {
             </Button>
           </ModalFooter>
         </Modal>
-        <Modal show={this.state.modalGrafico}>
+        <Modal show={this.state.modalGrafico} fullscreen='true' dialogClassName="modal-90w" size='xl'>
           <ModalHeader>
             <ModalTitle>Poa Vs M.Contractual</ModalTitle>
           </ModalHeader>
