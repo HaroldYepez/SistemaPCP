@@ -161,7 +161,7 @@ export default class POAvsSPrueba extends Component {
             temp2["siglas"]= elemento.unidad.siglas
             paraGrafica[elemento.unidad.id_unidad] = temp2;
           } else {
-            if (paraGrafica[elemento.unidad.id_unidad]["actividades"][elemento.requerimiento.actividad.id_actividad]){
+            if (paraGrafica[elemento.unidad.id_unidad]["actividades"][elemento.requerimiento.actividad.id_actividad] != null){
               paraGrafica[elemento.unidad.id_unidad]["montoReferencial"] += elemento.montoRef;
             }else{
               paraGrafica[elemento.unidad.id_unidad]["montoReferencial"] += elemento.montoRef;

@@ -12,10 +12,10 @@ import javax.persistence.Table;
 @Table(name = "solicitud_certificacion")
 public class Solicitud_Certificacion {
 
-    @Id
+    
     @Column(name = "solicitud_num_solicitud")
     public String solicitud_num_solicitud;
-
+    @Id
     @Column(name = "certificacion_oid")
     public Integer certificacion_oid;
 
@@ -26,10 +26,10 @@ public class Solicitud_Certificacion {
         this.solicitud_num_solicitud = solicitud_num_solicitud;
     }
 
-    public Integer gettramite_num_tramite() {
+    public Integer getcertificacion_oid() {
         return certificacion_oid;
     }
-    public void settramite_num_tramite(Integer certificacion_oid) {
+    public void setcertificacion_oid(Integer certificacion_oid) {
         this.certificacion_oid = certificacion_oid;
     }
     

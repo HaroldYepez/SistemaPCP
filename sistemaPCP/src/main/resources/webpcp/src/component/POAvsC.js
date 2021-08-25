@@ -46,6 +46,7 @@ export default class POAvsCPrueba extends Component {
           datos: {},
           modalGrafico: false,
           listaUnidad: [],
+          selUnidad: "",
         };
         this.tramiteService = new TramiteService();
         this.actividadService = new ActividadService();
@@ -57,9 +58,10 @@ export default class POAvsCPrueba extends Component {
         this.solicitud_certificacionService= new Solicitud_CertificacionService();
      
       }
-      mostrarModalActualizar = (idActividad) => {
+      mostrarModalActualizar = (elemento) => {
         this.setState({
-          selActividad: idActividad,
+          selActividad: elemento.id_actividad,
+          selUnidad: elemento.unidad,
           modalActualizar: true,
         });
         console.log("este dato pase aqui"+this.state.selActividad);
@@ -84,6 +86,7 @@ export default class POAvsCPrueba extends Component {
                 cert["noCertificacion"] = elemento.noCertificacion;
                 cert["montoRef"] = elemento.total;
                 temp[elemento.oid] = cert;  
+                
               });
               this.setState({certificacion: temp});
               
@@ -103,14 +106,87 @@ export default class POAvsCPrueba extends Component {
               var results = {};
               var paraGrafica = {};
               var act = {};
-              
+              var indice = 0;
+              var indice2 = 0;
+              var flag = false;
               data3.map((elemento3) => {
                 var requerimiento = this.state.solicitud[elemento3.solicitud_num_solicitud]["requerimiento"];
                 var unidad = this.state.solicitud[elemento3.solicitud_num_solicitud]["unidad"];
                 var certificacion = this.state.certificacion[elemento3.certificacion_oid];
-                
+                console.log(elemento3)
                 if (certificacion["noCertificacion"] != null && requerimiento != null){
+                  //console.log(elemento3.certificacion_oid+" "+certificacion.noCertificacion)
+                  var id_acti = requerimiento.actividad.id_actividad;
                   
+                  Object.values(results).map((elem) =>{
+                    if(elem != null){
+                      if (elem["id_actividad"] == id_acti && elem["unidad"] == unidad.siglas) {
+
+                        var solici = {};
+                        solici["id_actividad"] = requerimiento.actividad.id_actividad;
+                        solici["numSolicitud"] = elemento3.solicitud_num_solicitud;
+                        solici["noCertificacion"] = certificacion.noCertificacion;
+                        if(certificacion["montoRef"] == null){
+                          solici["monto"] = 0;
+                        }else{
+                          solici["monto"] = certificacion["montoRef"];
+                        }
+                        solici["unidad"] = unidad.siglas;
+                        act[indice2] = solici;
+                        indice2+=1;
+                        elem["solicitud"] += 1;
+                        elem["montoReferencial"] += certificacion["montoRef"];
+                        flag = true;
+
+                      }
+
+                    }
+                  });
+                  if (flag == false){
+                    var json = {};
+                    var solici = {};
+                    solici["id_actividad"] = requerimiento.actividad.id_actividad;
+                    solici["numSolicitud"] = elemento3.solicitud_num_solicitud;
+                    solici["noCertificacion"] = certificacion.noCertificacion;
+                    solici["unidad"] = unidad.siglas;
+                    
+                    json["id_actividad"] = requerimiento.actividad.id_actividad;
+                    json["actividad"] = requerimiento.actividad.descripcion_acti;
+                    json["presupuesto"] = requerimiento.actividad.precTotal;
+                    json["unidad"] = unidad.siglas;
+                    json["solicitud"] = 1;
+                    if(certificacion["montoRef"] == null){
+                      json["montoReferencial"] = 0;
+                      solici["monto"] = 0;
+                    }else{
+                      json["montoReferencial"] = certificacion["montoRef"];
+                      solici["monto"] = certificacion["montoRef"];
+                    }
+                    act[indice2] = solici;
+                    results[indice] = json;
+                    indice += 1;
+                    indice2 += 1;
+                  }
+                  flag = false;
+                  if (paraGrafica[unidad.id_unidad] == null) {
+                    var temp2 = {};
+                    var actividades = {};
+                    actividades[requerimiento.actividad.id_actividad] = requerimiento.actividad.precTotal;
+                    temp2["actividades"] = actividades;
+                    temp2["presupuesto"] = requerimiento.actividad.precTotal;
+                    temp2["montoReferencial"] = certificacion["montoRef"];
+                    temp2["siglas"]= unidad.siglas
+                    paraGrafica[unidad.id_unidad] = temp2;
+                  } else {
+                    if (paraGrafica[unidad.id_unidad]["actividades"][requerimiento.actividad.id_actividad] != null){
+                      paraGrafica[unidad.id_unidad]["montoReferencial"] += certificacion["montoRef"];
+                    }else{
+                      paraGrafica[unidad.id_unidad]["montoReferencial"] += certificacion["montoRef"];
+                      paraGrafica[unidad.id_unidad]["presupuesto"] +=requerimiento.actividad.precTotal;
+                  
+                    }
+                  }
+                  /*
                   if( results[requerimiento.actividad.id_actividad] == null){
                     var json = {};
                     act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento3.solicitud_num_solicitud,"Total":certificacion["montoRef"]}];
@@ -133,7 +209,7 @@ export default class POAvsCPrueba extends Component {
                   } else {
                     paraGrafica[unidad.id_unidad]["montoReferencial"] += certificacion["montoRef"];
                     paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;
-                  }
+                  }*/
                   
                 }      
               });
@@ -254,16 +330,16 @@ export default class POAvsCPrueba extends Component {
                     <td>${elemento.presupuesto}</td>
                     <td>{elemento.unidad}</td>
                     <td>{elemento.solicitud}</td>
-                    <td>${elemento.solicitudMonto}</td>
+                    <td>${elemento.montoReferencial}</td>
                     <td>
-                      {((parseInt(elemento.solicitudMonto) * 100) /
+                      {((parseInt(elemento.montoReferencial) * 100) /
                         elemento.presupuesto).toFixed(2) +
                         "%"}
                     </td>
                     <td>
                       <Button
                         variant="link"
-                        onClick={() => this.mostrarModalActualizar(index)}
+                        onClick={() => this.mostrarModalActualizar(elemento)}
                       >
                         <FcViewDetails size={32} />
                       </Button>
@@ -281,16 +357,16 @@ export default class POAvsCPrueba extends Component {
                       <td>${elemento.presupuesto}</td>
                       <td>{elemento.unidad}</td>
                       <td>{elemento.solicitud}</td>
-                      <td>${elemento.solicitudMonto}</td>
+                      <td>${elemento.montoReferencial}</td>
                       <td>
-                        {((parseInt(elemento.solicitudMonto) * 100) /
+                        {((parseInt(elemento.montoReferencial) * 100) /
                           elemento.presupuesto).toFixed(2) +
                           "%"}
                       </td>
                       <td>
                         <Button
                           variant="link"
-                          onClick={() => this.mostrarModalActualizar(index)}
+                          onClick={() => this.mostrarModalActualizar(elemento)}
                         >
                           <FcViewDetails size={32} />
                         </Button>
@@ -329,22 +405,29 @@ export default class POAvsCPrueba extends Component {
             <Table striped bordered hover>
             <thead className="fila-titulo" style={{ height: 50 }}>
             <th>Codigo Certificacion</th>
+            <th>Codigo Solicitud</th>
             <th>Monto Cotizacion Referencial</th>
             </thead>
             <tbody>
-            {parseInt(this.state.selActividad) >= 0?
-              Object.values(this.state.numSolicitudes)[this.state.selActividad].map((elemento) => (
-                <tr>
-                  <td>{elemento.cosSolicitud}</td>
-                  <td>${elemento.Total}</td>
-                </tr>
-              ))
-              :
-              <tr>
-                <td>No</td>
-                <td>Data</td>
-              </tr>
-              }
+            {parseInt(this.state.selActividad) >= 0 ? (
+                  Object.values(this.state.numSolicitudes).map((elemento) => (
+                    elemento.id_actividad == parseInt(this.state.selActividad) & elemento.unidad == this.state.selUnidad ? (
+                    <tr>
+                      <td>{elemento.noCertificacion}</td>
+                      <td>{elemento.numSolicitud}</td>
+                      <td>${elemento.monto}</td>
+                    </tr>
+                    ):(
+                      <tr></tr>
+                    )
+                    
+                  ))
+                ) : (
+                  <tr>
+                    <td>No</td>
+                    <td>Data</td>
+                  </tr>
+                )}
             </tbody>
            
 
