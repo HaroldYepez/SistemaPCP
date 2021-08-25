@@ -113,9 +113,8 @@ export default class POAvsCPrueba extends Component {
                 var requerimiento = this.state.solicitud[elemento3.solicitud_num_solicitud]["requerimiento"];
                 var unidad = this.state.solicitud[elemento3.solicitud_num_solicitud]["unidad"];
                 var certificacion = this.state.certificacion[elemento3.certificacion_oid];
-                console.log(elemento3)
+                
                 if (certificacion["noCertificacion"] != null && requerimiento != null){
-                  //console.log(elemento3.certificacion_oid+" "+certificacion.noCertificacion)
                   var id_acti = requerimiento.actividad.id_actividad;
                   
                   Object.values(results).map((elem) =>{

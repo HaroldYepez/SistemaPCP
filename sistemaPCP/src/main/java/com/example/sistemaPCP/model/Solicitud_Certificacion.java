@@ -3,6 +3,8 @@ package com.example.sistemaPCP.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,11 +13,14 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "solicitud_certificacion")
 public class Solicitud_Certificacion {
-
+    
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "oid")
+    public Long oid;
     
     @Column(name = "solicitud_num_solicitud")
     public String solicitud_num_solicitud;
-    @Id
+    
     @Column(name = "certificacion_oid")
     public Integer certificacion_oid;
 

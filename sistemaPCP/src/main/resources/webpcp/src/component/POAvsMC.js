@@ -41,6 +41,7 @@ export default class POAvsMCPrueba extends Component {
       datos: {},
       modalGrafico: false,
       listaUnidad: [],
+      selUnidad: "",
     };
     this.tramiteService = new TramiteService();
     this.actividadService = new ActividadService();
@@ -49,9 +50,10 @@ export default class POAvsMCPrueba extends Component {
     this.requerimientoSevice = new RequerimientoService();
     this.solicitud_tramiteService= new Solicitud_TramiteService();
   }
-  mostrarModalActualizar = (idActividad) => {
+  mostrarModalActualizar = (elemento) => {
     this.setState({
-      selActividad: idActividad,
+      selActividad: elemento.id_actividad,
+      selUnidad: elemento.unidad,
       modalActualizar: true,
     });
     console.log("este dato pase aqui"+this.state.selActividad);
@@ -69,86 +71,170 @@ export default class POAvsMCPrueba extends Component {
       this.tramiteService.getAll().then((data) =>{  
         this.solicitudService.getAll().then((data2) => {
           
-            var temp2 = {};
-            data2.map((elemento2) =>{
-              //console.log(elemento2.numSolicitud)
-              var soli = {};
-              soli["numSolicitud"] = elemento2.numSolicitud;
-              soli["montoRef"] = elemento2.montoRef;
-              soli["unidad"] = elemento2.unidad;
-              soli["requerimiento"] = elemento2.requerimiento;
-              temp2[elemento2.numSolicitud] = soli;  
-            });
-            this.setState({solicitud: temp2});
-            //console.log(temp2)
-            //console.log(this.state.solicitud)
-        
-        var temp = {};
-        data.map((elemento) =>{
-          //console.log(elemento.numTramite)
-          //console.log(elemento.montoContractual)
-          var tram = {};
-          tram["numTramite"] = elemento.numTramite;
-          tram["montoContractual"] = elemento.montoContractual;
-          temp[elemento.numTramite]= tram;
-        });
-        this.setState({tramite: temp});
-        //console.log(temp)
-        //console.log(this.state.tramite)
-      
-      var results = {};
-      var paraGrafica = {};
-      var act = {}
-      data3.map((elemento) => {
-        var requerimiento = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
-        var unidad = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"];
-        var tramite = this.state.tramite[elemento.tramite_num_tramite];
-        if(requerimiento != null){
-        console.log(this.state.solicitud[elemento.solicitud_num_solicitud]["numSolicitud"])
-        if (results[requerimiento.actividad.id_actividad] == null) {
-          var json = {};
-          act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.solicitud_num_solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]}];
-          json["actividad"] = requerimiento.actividad.descripcion_acti;
-          json["presupuesto"] = requerimiento.actividad.precTotal;
-          json["unidad"] = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].siglas;
-          json["solicitud"] = 1;
-          if (this.state.tramite[elemento.tramite_num_tramite]["montoContractual"] == null) {
-            json["montoContractual"] = 0;
-          }else{
-            json["montoContractual"] = this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
-          }
-          results[requerimiento.actividad.id_actividad] = json;
-        } else {
-          if(act[requerimiento.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
-            act[requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.solicitud_num_Solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]})
-            results[requerimiento.actividad.id_actividad]["solicitud"] += 1;
-            results[requerimiento.actividad.id_actividad]["montoContractual"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]; 
-          }
-        }
-        if (paraGrafica[unidad.id_unidad] == null) {
           var temp2 = {};
-          temp2["presupuesto"] = requerimiento.actividad.precTotal;;
-          temp2["montoReferencial"] = tramite["montoContractual"];
-          temp2["siglas"]= unidad.siglas
-          paraGrafica[unidad.id_unidad] = temp2;
-        } else {
-          if(act[requerimiento.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
-            paraGrafica[unidad.id_unidad]["montoReferencial"] += tramite["montoContractual"];
-            paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;;
-          }
-        }
-        }
+          data2.map((elemento2) =>{
+            //console.log(elemento2.numSolicitud)
+            var soli = {};
+            soli["numSolicitud"] = elemento2.numSolicitud;
+            soli["montoRef"] = elemento2.montoRef;
+            soli["unidad"] = elemento2.unidad;
+            soli["requerimiento"] = elemento2.requerimiento;
+            temp2[elemento2.numSolicitud] = soli;  
+          });
+          this.setState({solicitud: temp2});
+          //console.log(temp2)
+          //console.log(this.state.solicitud)
+        
+          var temp = {};
+          data.map((elementos) =>{
+            //console.log(elemento.numTramite)
+            //console.log(elemento.montoContractual)
+            var tram = {};
+            tram["numTramite"] = elementos.numTramite;
+            tram["montoContractual"] = elementos.montoContractual;
+            temp[elementos.numTramite]= tram;
+          });
+          this.setState({tramite: temp});
+          //console.log(temp)
+          //console.log(this.state.tramite)
+      
+          var results = {};
+          var paraGrafica = {};
+          var act = {};
+          var indice = 0;
+          var indice2 = 0;
+          var flag = false;
+          data3.map((elemento) => {
+            console.log(elemento)
+            if(elemento != null){
+            var requerimiento = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
+            var unidad = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"];
+            var tramite = this.state.tramite[elemento.tramite_num_tramite];
+            
+            if(requerimiento != null && elemento.tramite_num_tramite != null){
+              var id_acti = requerimiento.actividad.id_actividad;
+              Object.values(results).map((elem) =>{
+                if(elem != null){
+                  if (elem["id_actividad"] == id_acti && elem["unidad"] == unidad.siglas) {
+
+                    var solici = {};
+                    solici["id_actividad"] = requerimiento.actividad.id_actividad;
+                    solici["numSolicitud"] = elemento.solicitud_num_solicitud;
+                    solici["numTramite"] = elemento.tramite_num_tramite;
+                    if(tramite["montoContractual"] == null){
+                      solici["monto"] = 0;
+                    }else{
+                      solici["monto"] = tramite["montoContractual"];
+                    }
+                    solici["unidad"] = unidad.siglas;
+                    act[indice2] = solici;
+                    indice2+=1;
+                    elem["solicitud"] += 1;
+                    if(elem["montoReferencial"] < tramite["montoContractual"]){
+                      elem["montoReferencial"] = tramite["montoContractual"];
+                    }
+                    //elem["montoReferencial"] += tramite["montoContractual"];
+                    flag = true;
+
+                  }
+
+                }
+              });
+              if (flag == false){
+                var json = {};
+                var solici = {};
+                solici["id_actividad"] = requerimiento.actividad.id_actividad;
+                solici["numSolicitud"] = elemento.solicitud_num_solicitud;
+                solici["numTramite"] = elemento.tramite_num_tramite;
+                solici["unidad"] = unidad.siglas;
+                
+                json["id_actividad"] = requerimiento.actividad.id_actividad;
+                json["actividad"] = requerimiento.actividad.descripcion_acti;
+                json["presupuesto"] = requerimiento.actividad.precTotal;
+                json["unidad"] = unidad.siglas;
+                json["solicitud"] = 1;
+                if(tramite["montoContractual"] == null){
+                  json["montoReferencial"] = 0;
+                  solici["monto"] = 0;
+                }else{
+                  json["montoReferencial"] = tramite["montoContractual"];
+                  solici["monto"] = tramite["montoContractual"];
+                }
+                act[indice2] = solici;
+                results[indice] = json;
+                indice += 1;
+                indice2 += 1;
+              }
+              flag = false;
+              if (paraGrafica[unidad.id_unidad] == null) {
+                var temp2 = {};
+                var actividades = {};
+                actividades[requerimiento.actividad.id_actividad] = requerimiento.actividad.precTotal;
+                temp2["actividades"] = actividades;
+                temp2["presupuesto"] = requerimiento.actividad.precTotal;
+                temp2["montoReferencial"] = tramite["montoContractual"];
+                temp2["siglas"]= unidad.siglas
+                paraGrafica[unidad.id_unidad] = temp2;
+              } else {
+                if (paraGrafica[unidad.id_unidad]["actividades"][requerimiento.actividad.id_actividad] != null){
+                  if(paraGrafica[unidad.id_unidad]["montoReferencial"] < tramite["montoContractual"]){
+                    paraGrafica[unidad.id_unidad]["montoReferencial"] = tramite["montoContractual"];
+                  }
+                  //paraGrafica[unidad.id_unidad]["montoReferencial"] += tramite["montoContractual"];
+                }else{
+                  if(paraGrafica[unidad.id_unidad]["montoReferencial"] < tramite["montoContractual"]){
+                    paraGrafica[unidad.id_unidad]["montoReferencial"] = tramite["montoContractual"];
+                  }
+                  paraGrafica[unidad.id_unidad]["presupuesto"] +=requerimiento.actividad.precTotal;
+              
+                }
+              }
+              /*
+            console.log(this.state.solicitud[elemento.solicitud_num_solicitud]["numSolicitud"])
+            if (results[requerimiento.actividad.id_actividad] == null) {
+              var json = {};
+              act[requerimiento.actividad.id_actividad]=[{"cosSolicitud":elemento.solicitud_num_solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]}];
+              json["actividad"] = requerimiento.actividad.descripcion_acti;
+              json["presupuesto"] = requerimiento.actividad.precTotal;
+              json["unidad"] = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"].siglas;
+              json["solicitud"] = 1;
+              if (this.state.tramite[elemento.tramite_num_tramite]["montoContractual"] == null) {
+                json["montoContractual"] = 0;
+              }else{
+                json["montoContractual"] = this.state.tramite[elemento.tramite_num_tramite]["montoContractual"];
+              }
+              results[requerimiento.actividad.id_actividad] = json;
+            } else {
+              if(act[requerimiento.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
+                act[requerimiento.actividad.id_actividad].push({"cosSolicitud":elemento.solicitud_num_Solicitud,"Total":this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]})
+                results[requerimiento.actividad.id_actividad]["solicitud"] += 1;
+                results[requerimiento.actividad.id_actividad]["montoContractual"] += this.state.tramite[elemento.tramite_num_tramite]["montoContractual"]; 
+              }
+            }
+            if (paraGrafica[unidad.id_unidad] == null) {
+              var temp2 = {};
+              temp2["presupuesto"] = requerimiento.actividad.precTotal;;
+              temp2["montoReferencial"] = tramite["montoContractual"];
+              temp2["siglas"]= unidad.siglas
+              paraGrafica[unidad.id_unidad] = temp2;
+            } else {
+              if(act[requerimiento.actividad.id_actividad]["cosSolicitud"] != elemento.solicitud_num_Solicitud){
+                paraGrafica[unidad.id_unidad]["montoReferencial"] += tramite["montoContractual"];
+                paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;;
+              }
+            }*/
+            }}
+          });
+          this.setState({
+            listaActividad: results,
+            numSolicitudes: act,
+            listaUnidad: paraGrafica,
+          });
+          console.log(results);
+          console.log(this.state.numSolicitudes)
+        });
+        });
       });
-      this.setState({
-        listaActividad: results,
-        numSolicitudes: act,
-        listaUnidad: paraGrafica,
-      });
-      //console.log(results);
-      //console.log(this.state.numSolicitudes)
-    });
-    });
-  });
   
   };
 
@@ -253,7 +339,7 @@ export default class POAvsMCPrueba extends Component {
                     <td>${elemento.presupuesto}</td>
                     <td>{elemento.unidad}</td>
                     <td>{elemento.solicitud}</td>
-                    <td>${elemento.montoContractual}</td>
+                    <td>${elemento.montoReferencial}</td>
                     <td>
                       {((parseInt(elemento.montoContractual) * 100) /
                         elemento.presupuesto).toFixed(2) +
@@ -262,7 +348,7 @@ export default class POAvsMCPrueba extends Component {
                     <td>
                       <Button
                         variant="link"
-                        onClick={() => this.mostrarModalActualizar(index)}
+                        onClick={() => this.mostrarModalActualizar(elemento)}
                       >
                         <FcViewDetails size={32} />
                       </Button>
@@ -280,7 +366,7 @@ export default class POAvsMCPrueba extends Component {
                       <td>${elemento.presupuesto}</td>
                       <td>{elemento.unidad}</td>
                       <td>{elemento.solicitud}</td>
-                      <td>${elemento.montoContractual}</td>
+                      <td>${elemento.montoReferencial}</td>
                       <td>
                         {((parseInt(elemento.montoContractual) * 100) /
                           elemento.presupuesto).toFixed(2) +
@@ -289,7 +375,7 @@ export default class POAvsMCPrueba extends Component {
                       <td>
                         <Button
                           variant="link"
-                          onClick={() => this.mostrarModalActualizar(index)}
+                          onClick={() => this.mostrarModalActualizar(elemento)}
                         >
                           <FcViewDetails size={32} />
                         </Button>
@@ -328,23 +414,30 @@ export default class POAvsMCPrueba extends Component {
           <ModalBody>
             <Table striped bordered hover>
             <thead className="fila-titulo" style={{ height: 50 }}>
+            <th>Codigo Trámite</th>
             <th>Codigo Solicitud</th>
             <th>Monto Cotizacion Referencial</th>
             </thead>
             <tbody>
-            {parseInt(this.state.selActividad) >= 0?
-              Object.values(this.state.numSolicitudes)[this.state.selActividad].map((elemento) => (
-                <tr>
-                  <td>{elemento.cosSolicitud}</td>
-                  <td>${elemento.Total}</td>
-                </tr>
-              ))
-              :
-              <tr>
-                <td>No</td>
-                <td>Data</td>
-              </tr>
-              }
+            {parseInt(this.state.selActividad) >= 0 ? (
+                  Object.values(this.state.numSolicitudes).map((elemento) => (
+                    elemento.id_actividad == parseInt(this.state.selActividad) & elemento.unidad == this.state.selUnidad ? (
+                    <tr>
+                      <td>{elemento.numTramite}</td>
+                      <td>{elemento.numSolicitud}</td>
+                      <td>${elemento.monto}</td>
+                    </tr>
+                    ):(
+                      <tr></tr>
+                    )
+                    
+                  ))
+                ) : (
+                  <tr>
+                    <td>No</td>
+                    <td>Data</td>
+                  </tr>
+                )}
             </tbody>
            
 
