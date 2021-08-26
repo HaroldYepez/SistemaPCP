@@ -1,7 +1,7 @@
 package com.example.sistemaPCP;
 
 import java.util.ArrayList;
-
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class SistemaPcpApplication {
 		// saveActividad();
 		Map<String, ArrayList<String>> actividades = new HashMap<String, ArrayList<String>>();
 		Map<String, ArrayList<String>> requerimientos = new HashMap<String, ArrayList<String>>();
-
+		int year = Calendar.getInstance().get(Calendar.YEAR);
 		ConfigurableApplicationContext context = SpringApplication.run(SistemaPcpApplication.class);
 		ActividadServiceImpl repository = context.getBean(ActividadServiceImpl.class);
 		RequerimientoServiceImpl repository2 = context.getBean(RequerimientoServiceImpl.class);
@@ -37,7 +37,7 @@ public class SistemaPcpApplication {
 		for(int j = 0; j < unidades.size() -1; j++){
 			Long unidad = unidades.get(j).getId_unidad();
 		
-			String uri = "http://192.168.253.6:8080/api/poaactividad/GetActividadByUnidad/"+unidad+"/2021";
+			String uri = "http://192.168.253.6:8080/api/poaactividad/GetActividadByUnidad/"+unidad+"/"+year;
 			RestTemplate rest = new RestTemplate();
 			String results = rest.getForObject(uri, String.class);
 			try {
