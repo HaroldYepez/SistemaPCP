@@ -3,13 +3,15 @@ package com.example.sistemaPCP;
 import java.util.ArrayList;
 
 import java.util.HashMap;
-
+import java.util.List;
 import java.util.Map;
 
 import com.example.sistemaPCP.Service.impl.ActividadServiceImpl;
 import com.example.sistemaPCP.Service.impl.RequerimientoServiceImpl;
+import com.example.sistemaPCP.Service.impl.UnidadServiceImpl;
 import com.example.sistemaPCP.model.Actividad;
 import com.example.sistemaPCP.model.Requerimiento;
+import com.example.sistemaPCP.model.Unidad;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,43 +32,48 @@ public class SistemaPcpApplication {
 		ConfigurableApplicationContext context = SpringApplication.run(SistemaPcpApplication.class);
 		ActividadServiceImpl repository = context.getBean(ActividadServiceImpl.class);
 		RequerimientoServiceImpl repository2 = context.getBean(RequerimientoServiceImpl.class);
+		UnidadServiceImpl repositorio3 = context.getBean(UnidadServiceImpl.class);
+		List<Unidad> unidades = repositorio3.getAll();
+		for(int j = 0; j < unidades.size() -1; j++){
+			Long unidad = unidades.get(j).getId_unidad();
+		
+			String uri = "http://192.168.253.6:8080/api/poaactividad/GetActividadByUnidad/"+unidad+"/2021";
+			RestTemplate rest = new RestTemplate();
+			String results = rest.getForObject(uri, String.class);
+			try {
+				JSONArray jsonarray = new JSONArray(results);
+				for (int i = 0; i < jsonarray.length(); i++) {
+					JSONObject jsonobject = jsonarray.getJSONObject(i);
+					String id_actividad = jsonobject.getString("idactividad");
+					String descripcion_acti = jsonobject.getString("actividad");
+					String prec_total = jsonobject.getString("totalProyectado");
+					String id_requerimiento = jsonobject.getString("idrequerimiento");
+					String requerimiento = jsonobject.getString("requerimiento");
+					if (actividades.get(id_actividad) == null) {
+						ArrayList<String> actividad = new ArrayList<String>();
+						actividad.add(descripcion_acti);
+						actividad.add(prec_total);
+						actividades.put(id_actividad, actividad);
+						// repository.save(new Actividad(Long.parseLong(id_actividad), descripcion_acti,
+						// sum));
+					} else {
+						String montoActual = actividades.get(id_actividad).get(1);
+						Float montoNuevo = Float.parseFloat(montoActual) + Float.parseFloat(prec_total);
+						actividades.get(id_actividad).set(1, montoNuevo.toString());
 
-		String uri = "http://192.168.253.6:8080/api/poaactividad/GetActividadByUnidad/37/2021";
-		RestTemplate rest = new RestTemplate();
-		String results = rest.getForObject(uri, String.class);
-		try {
-			JSONArray jsonarray = new JSONArray(results);
-			for (int i = 0; i < jsonarray.length(); i++) {
-				JSONObject jsonobject = jsonarray.getJSONObject(i);
-				String id_actividad = jsonobject.getString("idactividad");
-				String descripcion_acti = jsonobject.getString("actividad");
-				String prec_total = jsonobject.getString("totalProyectado");
-				String id_requerimiento = jsonobject.getString("idrequerimiento");
-				String requerimiento = jsonobject.getString("requerimiento");
-				if (actividades.get(id_actividad) == null) {
-					ArrayList<String> actividad = new ArrayList<String>();
-					actividad.add(descripcion_acti);
-					actividad.add(prec_total);
-					actividades.put(id_actividad, actividad);
-					// repository.save(new Actividad(Long.parseLong(id_actividad), descripcion_acti,
-					// sum));
-				} else {
-					String montoActual = actividades.get(id_actividad).get(1);
-					Float montoNuevo = Float.parseFloat(montoActual) + Float.parseFloat(prec_total);
-					actividades.get(id_actividad).set(1, montoNuevo.toString());
+					}
+					ArrayList<String> datos_req = new ArrayList<String>();
+					datos_req.add(requerimiento);
+					datos_req.add(prec_total);
+					datos_req.add(id_actividad);
+					requerimientos.put(id_requerimiento,datos_req);
+					
 
 				}
-				ArrayList<String> datos_req = new ArrayList<String>();
-				datos_req.add(requerimiento);
-				datos_req.add(prec_total);
-				datos_req.add(id_actividad);
-				requerimientos.put(id_requerimiento,datos_req);
-				
 
+			} catch (JSONException err) {
+				System.out.println("Exception : " + err.toString());
 			}
-
-		} catch (JSONException err) {
-			System.out.println("Exception : " + err.toString());
 		}
 		for (Map.Entry<String, ArrayList<String>> entry : actividades.entrySet()) {
 			String key = entry.getKey();
