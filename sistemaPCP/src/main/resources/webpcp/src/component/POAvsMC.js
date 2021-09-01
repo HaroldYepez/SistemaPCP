@@ -5,8 +5,13 @@ import { TramiteService } from "../services/TramiteService";
 import { UnidadService } from "../services/UnidadService";
 import { ActividadService } from "../services/ActividadService";
 import { SolicitudService } from "../services/SolicitudService";
-import {Solicitud_TramiteService} from "../services/Solicitud_TramiteService";
+import { Solicitud_TramiteService } from "../services/Solicitud_TramiteService";
 import { Col } from "react-bootstrap";
+import Alert from "react-bootstrap/Alert";
+import DatePicker from "react-datepicker";
+import { FormGroup } from "react-bootstrap";
+import "react-datepicker/dist/react-datepicker.css";
+//import Fecha from "./Fecha";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Table from "react-bootstrap/Table";
@@ -21,12 +26,13 @@ import Button from "react-bootstrap/Button";
 import "./estilos.css";
 import { RequerimientoService } from "../services/RequerimientoService";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
-import {Bar} from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 
 export default class POAvsMCPrueba extends Component {
   constructor() {
     super();
     this.state = {
+      date: new Date().getFullYear().toString(),
       tramite: [],
       actividad: [],
       unidad: [],
@@ -34,8 +40,8 @@ export default class POAvsMCPrueba extends Component {
       requerimeinto: [],
       listaActividad: [],
       modalActualizar: false,
-      numSolicitudes:{},
-      selActividad:"",
+      numSolicitudes: {},
+      selActividad: "",
       filtro: false,
       filtroValue: "",
       datos: {},
@@ -48,7 +54,7 @@ export default class POAvsMCPrueba extends Component {
     this.unidadService = new UnidadService();
     this.solicitudService = new SolicitudService();
     this.requerimientoSevice = new RequerimientoService();
-    this.solicitud_tramiteService= new Solicitud_TramiteService();
+    this.solicitud_tramiteService = new Solicitud_TramiteService();
   }
   mostrarModalActualizar = (elemento) => {
     this.setState({
@@ -56,7 +62,9 @@ export default class POAvsMCPrueba extends Component {
       selUnidad: elemento.unidad,
       modalActualizar: true,
     });
-    console.log("este dato pase aqui"+this.state.selActividad);
+    console.log("este dato pase aqui" + this.state.selActividad);
+    console.log("este dato pase aqui" +  elemento.id_actividad);
+    
   };
   cerrarModalActualizar = () => {
     this.setState({ modalActualizar: false });
@@ -64,40 +72,91 @@ export default class POAvsMCPrueba extends Component {
   cerrarModalGrafico = () => {
     this.setState({ modalGrafico: false });
   };
+  onChange = (date) => {
+    console.log(date.getFullYear());
+    this.setState({ date: date.getFullYear().toString() });
+  };
+  getMontoContractualP = () => {
+    var fecha = this.state.date.toString();
+    var fecha2 = parseFloat(fecha);
+    this.solicitudService.gellYear(fecha2).then((data2) => {
+      var results = {};
+      var act = {};
+      data2.map((elemento1) => {
+        if (
+          results[elemento1.requerimiento.actividad.id_actividad] == null
+        ) {
+          var json = {};
+          json["id_actividad"] = elemento1.requerimiento.actividad.id_actividad;
+          json["actividad"] = elemento1.requerimiento.actividad.descripcion_acti;
+          json["presupuesto"] = elemento1.requerimiento.valorPresupuesto;
+          json["unidad"] = elemento1.unidad.siglas;
+          json["numsolicitud"] =1;
+          json["monto"] =0;
+          var cont="";
+          elemento1.tramite.map((elemento3) =>{
+            if (act[elemento1.requerimiento.actividad.id_actividad] == null){
+            act[elemento1.requerimiento.actividad.id_actividad]=[{"codSolicitud":elemento1.numSolicitud,"codTramite":elemento3.numTramite,"Total":elemento3.montoContractual}];
+            }else{
+              act[elemento1.requerimiento.actividad.id_actividad].push({"codSolicitud":elemento1.numSolicitud,"codTramite":elemento3.numTramite,"Total":elemento3.montoContractual})
+              json["numsolicitud"]+= 1;
+              if(elemento3.montoContractual!=null && elemento3.numTramite!=cont){
+                json["monto"] +=elemento3.montoContractual;
+                cont=elemento3.numTramite;
+              }
+              // json["monto"] +=elemento3.montoContractual;
+              // console.log( json["numsolicitud"]);
+              
+              
+            }
+           
+          });
+          //console.log(act)
+          results[elemento1.requerimiento.actividad.id_actividad] = json;
+          //console.log(results)
+        }
+        
+      });
+      this.setState({
+        listaActividad: results,
+        numSolicitudes: act
+      });
+      console.log(results);
+      console.log(this.state.numSolicitudes)
+    });
+  };
 
-  
   getMontoContractual = () => {
     this.solicitud_tramiteService.getAll().then((data3) => {
-      this.tramiteService.getAll().then((data) =>{  
+      this.tramiteService.getAll().then((data) => {
         this.solicitudService.getAll().then((data2) => {
-          
           var temp2 = {};
-          data2.map((elemento2) =>{
+          data2.map((elemento2) => {
             //console.log(elemento2.numSolicitud)
             var soli = {};
             soli["numSolicitud"] = elemento2.numSolicitud;
             soli["montoRef"] = elemento2.montoRef;
             soli["unidad"] = elemento2.unidad;
             soli["requerimiento"] = elemento2.requerimiento;
-            temp2[elemento2.numSolicitud] = soli;  
+            temp2[elemento2.numSolicitud] = soli;
           });
-          this.setState({solicitud: temp2});
+          this.setState({ solicitud: temp2 });
           //console.log(temp2)
           //console.log(this.state.solicitud)
-        
+
           var temp = {};
-          data.map((elementos) =>{
+          data.map((elementos) => {
             //console.log(elemento.numTramite)
             //console.log(elemento.montoContractual)
             var tram = {};
             tram["numTramite"] = elementos.numTramite;
             tram["montoContractual"] = elementos.montoContractual;
-            temp[elementos.numTramite]= tram;
+            temp[elementos.numTramite] = tram;
           });
-          this.setState({tramite: temp});
+          this.setState({ tramite: temp });
           //console.log(temp)
           //console.log(this.state.tramite)
-      
+
           var results = {};
           var paraGrafica = {};
           var act = {};
@@ -105,91 +164,116 @@ export default class POAvsMCPrueba extends Component {
           var indice2 = 0;
           var flag = false;
           data3.map((elemento) => {
-            console.log(elemento)
-            if(elemento != null){
-            var requerimiento = this.state.solicitud[elemento.solicitud_num_solicitud]["requerimiento"];
-            var unidad = this.state.solicitud[elemento.solicitud_num_solicitud]["unidad"];
-            var tramite = this.state.tramite[elemento.tramite_num_tramite];
-            
-            if(requerimiento != null && elemento.tramite_num_tramite != null){
-              var id_acti = requerimiento.actividad.id_actividad;
-              Object.values(results).map((elem) =>{
-                if(elem != null){
-                  if (elem["id_actividad"] == id_acti && elem["unidad"] == unidad.siglas) {
+            console.log(elemento);
+            if (elemento != null) {
+              var requerimiento =
+                this.state.solicitud[elemento.solicitud_num_solicitud][
+                  "requerimiento"
+                ];
+              var unidad =
+                this.state.solicitud[elemento.solicitud_num_solicitud][
+                  "unidad"
+                ];
+              var tramite = this.state.tramite[elemento.tramite_num_tramite];
 
-                    var solici = {};
-                    solici["id_actividad"] = requerimiento.actividad.id_actividad;
-                    solici["numSolicitud"] = elemento.solicitud_num_solicitud;
-                    solici["numTramite"] = elemento.tramite_num_tramite;
-                    if(tramite["montoContractual"] == null){
-                      solici["monto"] = 0;
-                    }else{
-                      solici["monto"] = tramite["montoContractual"];
+              if (
+                requerimiento != null &&
+                elemento.tramite_num_tramite != null
+              ) {
+                var id_acti = requerimiento.actividad.id_actividad;
+                Object.values(results).map((elem) => {
+                  if (elem != null) {
+                    if (
+                      elem["id_actividad"] == id_acti &&
+                      elem["unidad"] == unidad.siglas
+                    ) {
+                      var solici = {};
+                      solici["id_actividad"] =
+                        requerimiento.actividad.id_actividad;
+                      solici["numSolicitud"] = elemento.solicitud_num_solicitud;
+                      solici["numTramite"] = elemento.tramite_num_tramite;
+                      if (tramite["montoContractual"] == null) {
+                        solici["monto"] = 0;
+                      } else {
+                        solici["monto"] = tramite["montoContractual"];
+                      }
+                      solici["unidad"] = unidad.siglas;
+                      act[indice2] = solici;
+                      indice2 += 1;
+                      elem["solicitud"] += 1;
+                      if (
+                        elem["montoReferencial"] < tramite["montoContractual"]
+                      ) {
+                        elem["montoReferencial"] = tramite["montoContractual"];
+                      }
+                      //elem["montoReferencial"] += tramite["montoContractual"];
+                      flag = true;
                     }
-                    solici["unidad"] = unidad.siglas;
-                    act[indice2] = solici;
-                    indice2+=1;
-                    elem["solicitud"] += 1;
-                    if(elem["montoReferencial"] < tramite["montoContractual"]){
-                      elem["montoReferencial"] = tramite["montoContractual"];
+                  }
+                });
+                if (flag == false) {
+                  var json = {};
+                  var solici = {};
+                  solici["id_actividad"] = requerimiento.actividad.id_actividad;
+                  solici["numSolicitud"] = elemento.solicitud_num_solicitud;
+                  solici["numTramite"] = elemento.tramite_num_tramite;
+                  solici["unidad"] = unidad.siglas;
+
+                  json["id_actividad"] = requerimiento.actividad.id_actividad;
+                  json["actividad"] = requerimiento.actividad.descripcion_acti;
+                  json["presupuesto"] = requerimiento.actividad.precTotal;
+                  json["unidad"] = unidad.siglas;
+                  json["solicitud"] = 1;
+                  if (tramite["montoContractual"] == null) {
+                    json["montoReferencial"] = 0;
+                    solici["monto"] = 0;
+                  } else {
+                    json["montoReferencial"] = tramite["montoContractual"];
+                    solici["monto"] = tramite["montoContractual"];
+                  }
+                  act[indice2] = solici;
+                  results[indice] = json;
+                  indice += 1;
+                  indice2 += 1;
+                }
+                flag = false;
+                if (paraGrafica[unidad.id_unidad] == null) {
+                  var temp2 = {};
+                  var actividades = {};
+                  actividades[requerimiento.actividad.id_actividad] =
+                    requerimiento.actividad.precTotal;
+                  temp2["actividades"] = actividades;
+                  temp2["presupuesto"] = requerimiento.actividad.precTotal;
+                  temp2["montoReferencial"] = tramite["montoContractual"];
+                  temp2["siglas"] = unidad.siglas;
+                  paraGrafica[unidad.id_unidad] = temp2;
+                } else {
+                  if (
+                    paraGrafica[unidad.id_unidad]["actividades"][
+                      requerimiento.actividad.id_actividad
+                    ] != null
+                  ) {
+                    if (
+                      paraGrafica[unidad.id_unidad]["montoReferencial"] <
+                      tramite["montoContractual"]
+                    ) {
+                      paraGrafica[unidad.id_unidad]["montoReferencial"] =
+                        tramite["montoContractual"];
                     }
-                    //elem["montoReferencial"] += tramite["montoContractual"];
-                    flag = true;
-
+                    //paraGrafica[unidad.id_unidad]["montoReferencial"] += tramite["montoContractual"];
+                  } else {
+                    if (
+                      paraGrafica[unidad.id_unidad]["montoReferencial"] <
+                      tramite["montoContractual"]
+                    ) {
+                      paraGrafica[unidad.id_unidad]["montoReferencial"] =
+                        tramite["montoContractual"];
+                    }
+                    paraGrafica[unidad.id_unidad]["presupuesto"] +=
+                      requerimiento.actividad.precTotal;
                   }
-
                 }
-              });
-              if (flag == false){
-                var json = {};
-                var solici = {};
-                solici["id_actividad"] = requerimiento.actividad.id_actividad;
-                solici["numSolicitud"] = elemento.solicitud_num_solicitud;
-                solici["numTramite"] = elemento.tramite_num_tramite;
-                solici["unidad"] = unidad.siglas;
-                
-                json["id_actividad"] = requerimiento.actividad.id_actividad;
-                json["actividad"] = requerimiento.actividad.descripcion_acti;
-                json["presupuesto"] = requerimiento.actividad.precTotal;
-                json["unidad"] = unidad.siglas;
-                json["solicitud"] = 1;
-                if(tramite["montoContractual"] == null){
-                  json["montoReferencial"] = 0;
-                  solici["monto"] = 0;
-                }else{
-                  json["montoReferencial"] = tramite["montoContractual"];
-                  solici["monto"] = tramite["montoContractual"];
-                }
-                act[indice2] = solici;
-                results[indice] = json;
-                indice += 1;
-                indice2 += 1;
-              }
-              flag = false;
-              if (paraGrafica[unidad.id_unidad] == null) {
-                var temp2 = {};
-                var actividades = {};
-                actividades[requerimiento.actividad.id_actividad] = requerimiento.actividad.precTotal;
-                temp2["actividades"] = actividades;
-                temp2["presupuesto"] = requerimiento.actividad.precTotal;
-                temp2["montoReferencial"] = tramite["montoContractual"];
-                temp2["siglas"]= unidad.siglas
-                paraGrafica[unidad.id_unidad] = temp2;
-              } else {
-                if (paraGrafica[unidad.id_unidad]["actividades"][requerimiento.actividad.id_actividad] != null){
-                  if(paraGrafica[unidad.id_unidad]["montoReferencial"] < tramite["montoContractual"]){
-                    paraGrafica[unidad.id_unidad]["montoReferencial"] = tramite["montoContractual"];
-                  }
-                  //paraGrafica[unidad.id_unidad]["montoReferencial"] += tramite["montoContractual"];
-                }else{
-                  if(paraGrafica[unidad.id_unidad]["montoReferencial"] < tramite["montoContractual"]){
-                    paraGrafica[unidad.id_unidad]["montoReferencial"] = tramite["montoContractual"];
-                  }
-                  paraGrafica[unidad.id_unidad]["presupuesto"] +=requerimiento.actividad.precTotal;
-              
-                }
-              }
-              /*
+                /*
             console.log(this.state.solicitud[elemento.solicitud_num_solicitud]["numSolicitud"])
             if (results[requerimiento.actividad.id_actividad] == null) {
               var json = {};
@@ -223,7 +307,8 @@ export default class POAvsMCPrueba extends Component {
                 paraGrafica[unidad.id_unidad]["presupuesto"] += requerimiento.actividad.precTotal;;
               }
             }*/
-            }}
+              }
+            }
           });
           this.setState({
             listaActividad: results,
@@ -231,62 +316,64 @@ export default class POAvsMCPrueba extends Component {
             listaUnidad: paraGrafica,
           });
           console.log(results);
-          console.log(this.state.numSolicitudes)
-        });
+          console.log(this.state.numSolicitudes);
         });
       });
-  
+    });
   };
 
   componentDidMount() {
-    this.getMontoContractual();
+    //this.getMontoContractual();
+    //this.getMontoContractualP();
   }
 
   filtroDatos = (Value) => {
-    if (Value == ""){
+    if (Value == "") {
       this.setState({
         filtro: false,
-    });
-    }else{
-    this.setState({
-    filtro: true,
-    filtroValue: Value},
-    );}
-  }
+      });
+    } else {
+      this.setState({
+        filtro: true,
+        filtroValue: Value,
+      });
+    }
+  };
 
   llenarDatos() {
-    var labels= [];
-    var datasets= [];
-    var dataPresu= {};
-    var datosPresu=[];
-    var dataMonto= {};
-    var datosMonto=[];
-    var dataSaldo= {};
-    var datosSaldo=[];
-    var datosgraf={};
+    var labels = [];
+    var datasets = [];
+    var dataPresu = {};
+    var datosPresu = [];
+    var dataMonto = {};
+    var datosMonto = [];
+    var dataSaldo = {};
+    var datosSaldo = [];
+    var datosgraf = {};
     Object.values(this.state.listaUnidad).map(
       (elemento) => (
         labels.push(elemento.siglas),
         datosPresu.push(elemento.presupuesto),
         datosMonto.push(elemento.montoReferencial),
         datosSaldo.push(elemento.presupuesto - elemento.montoReferencial)
-      ));
+      )
+    );
 
     dataPresu["data"] = datosPresu;
     dataPresu["label"] = "Presupuesto";
     dataPresu["backgroundColor"] = "#0164A1";
 
     dataMonto["data"] = datosMonto;
-    dataMonto["label"]= "Monto Cotización Referencial";
-    dataMonto["backgroundColor"]= "#011D42";
+    dataMonto["label"] = "Monto Cotización Referencial";
+    dataMonto["backgroundColor"] = "#011D42";
 
     dataSaldo["data"] = datosSaldo;
-    dataSaldo["label"]= "Saldo";
-    dataSaldo["backgroundColor"]= "#F8B82B";
+    dataSaldo["label"] = "Saldo";
+    dataSaldo["backgroundColor"] = "#F8B82B";
 
     datasets.push(dataPresu, dataMonto, dataSaldo);
     datosgraf["labels"] = labels;
-    datosgraf["datasets"] = datasets; 
+    datosgraf["datasets"] = datasets;
     this.setState({
       datos: datosgraf,
       modalGrafico: true,
@@ -296,32 +383,62 @@ export default class POAvsMCPrueba extends Component {
   render() {
     return (
       <>
-        <Container style={{ background: "white", padding: "1%", textAlign: "center"  }}>
-        <Row>
-            <Col style={{ maxWidth: "150px", padding: "0%", paddingLeft: "1%"}}>
-              <InputGroup className="mb-3"  size="sm" style={{ maxWidth: "300px", fontSizeAdjust: "12px" }}>
+        <Container
+          style={{ background: "white", padding: "1%", textAlign: "center" }}
+        >
+          <Row>
+            <Col
+              style={{ maxWidth: "150px", padding: "0%", paddingLeft: "1%" }}
+            >
+              <InputGroup
+                className="mb-3"
+                size="sm"
+                style={{ maxWidth: "300px", fontSizeAdjust: "12px" }}
+              >
                 <FormControl
                   type="text"
                   placeholder="Buscar Unidad"
                   aria-label="Buscar"
                   aria-describedby="basic-addon1"
-                  
-                  onKeyPress={event => {
+                  onKeyPress={(event) => {
                     if (event.key === "Enter") {
                       this.filtroDatos(event.target.value);
                     }
                   }}
-                  
                 />
               </InputGroup>
             </Col>
-            <Col style={{ maxWidth: "150px", padding: "0%", marginLeft: "59%"}}>
-              <Button style={{ background:"#011d42"}} variant="secondary" onClick={() => this.llenarDatos()}>Gráfica</Button>
+            <Col>
+              <div align="center">
+                <Col sm={4}>
+                  <FormGroup>
+                    <DatePicker
+                      showYearPicker
+                      value={this.state.date}
+                      onChange={this.onChange}
+                    />
+                  </FormGroup>
+                </Col>
+              </div>
+            </Col>
+            <Col
+              style={{ maxWidth: "150px", padding: "0%", marginLeft: "59%" }}
+            >
+              <Button
+                style={{ background: "#011d42" }}
+                variant="secondary"
+                onClick={() => this.llenarDatos()}
+              >
+                Gráfica
+              </Button>
             </Col>
           </Row>
           <Table striped bordered hover id="table-to-xls">
             <Col>
-              <thead className="fila-titulo" style={{ height: 50 , borderColor: "#011d42" }}>
+              <thead
+                className="fila-titulo"
+                style={{ height: 50, borderColor: "#011d42" }}
+              >
                 <th width="20%">ActividadPoa</th>
                 <th>Presupuesto Asignado</th>
                 <th>Unidad Requerimiento</th>
@@ -331,64 +448,72 @@ export default class POAvsMCPrueba extends Component {
                 <th>Detalles</th>
               </thead>
               <tbody>
-                {this.state.filtro == true ? (
-                Object.values(this.state.listaActividad).map((elemento,index) => (
-                  elemento.unidad == this.state.filtroValue ? (
-                  <tr>
-                    <td>{elemento.actividad}</td>
-                    <td>${elemento.presupuesto}</td>
-                    <td>{elemento.unidad}</td>
-                    <td>{elemento.solicitud}</td>
-                    <td>${elemento.montoReferencial}</td>
-                    <td>
-                      {((parseInt(elemento.montoContractual) * 100) /
-                        elemento.presupuesto).toFixed(2) +
-                        "%"}
-                    </td>
-                    <td>
-                      <Button
-                        variant="link"
-                        onClick={() => this.mostrarModalActualizar(elemento)}
-                      >
-                        <FcViewDetails size={32} />
-                      </Button>
-                    </td>
-                  </tr>
-                  ):(
-                    <tr>
-                    
-                  </tr>
-                  ))
-                )):(
-                  Object.values(this.state.listaActividad).map((elemento,index) => (
-                    <tr>
-                      <td>{elemento.actividad}</td>
-                      <td>${elemento.presupuesto}</td>
-                      <td>{elemento.unidad}</td>
-                      <td>{elemento.solicitud}</td>
-                      <td>${elemento.montoReferencial}</td>
-                      <td>
-                        {((parseInt(elemento.montoContractual) * 100) /
-                          elemento.presupuesto).toFixed(2) +
-                          "%"}
-                      </td>
-                      <td>
-                        <Button
-                          variant="link"
-                          onClick={() => this.mostrarModalActualizar(elemento)}
-                        >
-                          <FcViewDetails size={32} />
-                        </Button>
-                      </td>
-                    </tr>
-                )
-                ))}
+                {this.state.filtro == true
+                  ? Object.values(this.state.listaActividad).map(
+                      (elemento, index) =>
+                        elemento.unidad == this.state.filtroValue ? (
+                          <tr>
+                            <td>{elemento.actividad}</td>
+                            <td>${elemento.presupuesto}</td>
+                            <td>{elemento.unidad}</td>
+                            <td>{elemento.numsolicitud}</td>
+                            <td>${elemento.monto}</td>
+                            <td>
+                              {(
+                                (parseInt(elemento.monto) * 100) /
+                                elemento.presupuesto
+                              ).toFixed(2) + "%"}
+                            </td>
+                            <td>
+                              <Button
+                                variant="link"
+                                onClick={() =>
+                                  this.mostrarModalActualizar(elemento)
+                                }
+                              >
+                                <FcViewDetails size={32} />
+                              </Button>
+                            </td>
+                          </tr>
+                        ) : (
+                          <tr></tr>
+                        )
+                    )
+                  : Object.values(this.state.listaActividad).map(
+                      (elemento, index) => (
+                        <tr>
+                          <td>{elemento.actividad}</td>
+                          <td>${elemento.presupuesto}</td>
+                          <td>{elemento.unidad}</td>
+                          <td>{elemento.numsolicitud}</td>
+                          <td>${elemento.monto}</td>
+                          <td>
+                            {(
+                              (parseInt(elemento.monto) * 100) /
+                              elemento.presupuesto
+                            ).toFixed(2) + "%"}
+                          </td>
+                          <td>
+                            <Button
+                              variant="link"
+                              onClick={() =>
+                                this.mostrarModalActualizar(elemento)
+                              }
+                            >
+                              <FcViewDetails size={32} />
+                            </Button>
+                          </td>
+                        </tr>
+                      )
+                    )}
               </tbody>
             </Col>
           </Table>
           <Row>
-          <Col style={{ maxWidth: "150px", padding: "0%", paddingLeft: "1%"}}>
-          <div align="left">
+            <Col
+              style={{ maxWidth: "150px", padding: "0%", paddingLeft: "1%" }}
+            >
+              <div align="left">
                 <ReactHTMLTableToExcel
                   id="botonExportar"
                   className="btn btn-success"
@@ -398,49 +523,52 @@ export default class POAvsMCPrueba extends Component {
                   buttonText="Descargar Excel"
                 ></ReactHTMLTableToExcel>
               </div>
-          </Col>
-          
+            </Col>
+            <Col>
+              <div align="right">
+                <Button
+                  variant="primary"
+                  onClick={() => this.getMontoContractualP()}
+                >
+                  Consultar Reporte
+                </Button>
+              </div>
+            </Col>
           </Row>
-          
-          
         </Container>
         <Modal show={this.state.modalActualizar}>
-          <ModalHeader
-            closeButton
-            onClick={() => this.cerrarModalActualizar()}
-          >
+          <ModalHeader closeButton onClick={() => this.cerrarModalActualizar()}>
             <ModalTitle>Detalle Solicitud</ModalTitle>
           </ModalHeader>
           <ModalBody>
             <Table striped bordered hover>
-            <thead className="fila-titulo" style={{ height: 50 }}>
-            <th>Codigo Trámite</th>
-            <th>Codigo Solicitud</th>
-            <th>Monto Cotizacion Referencial</th>
-            </thead>
-            <tbody>
-            {parseInt(this.state.selActividad) >= 0 ? (
-                  Object.values(this.state.numSolicitudes).map((elemento) => (
-                    elemento.id_actividad == parseInt(this.state.selActividad) & elemento.unidad == this.state.selUnidad ? (
-                    <tr>
-                      <td>{elemento.numTramite}</td>
-                      <td>{elemento.numSolicitud}</td>
-                      <td>${elemento.monto}</td>
-                    </tr>
-                    ):(
+              <thead className="fila-titulo" style={{ height: 50 }}>
+                <th>Codigo Trámite</th>
+                <th>Codigo Solicitud</th>
+                <th>Monto Cotizacion Referencial</th>
+              </thead>
+              <tbody>
+                {parseInt(this.state.selActividad) >= 0 ? (
+                  Object.values(this.state.numSolicitudes).map((elemento) =>
+                    (elemento.id_actividad ==
+                      parseInt(this.state.selActividad)) &
+                    (elemento.unidad == this.state.selUnidad) ? (
+                      <tr>
+                        <td>{elemento.codTramite}</td>
+                        <td>{elemento.codSolicitud}</td>
+                        <td>${elemento.Total}</td>
+                      </tr>
+                    ) : (
                       <tr></tr>
                     )
-                    
-                  ))
+                  )
                 ) : (
                   <tr>
                     <td>No</td>
                     <td>Data</td>
                   </tr>
                 )}
-            </tbody>
-           
-
+              </tbody>
             </Table>
           </ModalBody>
           <ModalFooter>
@@ -452,13 +580,18 @@ export default class POAvsMCPrueba extends Component {
             </Button>
           </ModalFooter>
         </Modal>
-        <Modal show={this.state.modalGrafico} fullscreen='true' dialogClassName="modal-90w" size='xl'>
+        <Modal
+          show={this.state.modalGrafico}
+          fullscreen="true"
+          dialogClassName="modal-90w"
+          size="xl"
+        >
           <ModalHeader>
             <ModalTitle>Poa Vs M.Contractual</ModalTitle>
           </ModalHeader>
           <ModalBody>
             <Row>
-              <Bar data={this.state.datos}/>
+              <Bar data={this.state.datos} />
             </Row>
           </ModalBody>
           <ModalFooter>

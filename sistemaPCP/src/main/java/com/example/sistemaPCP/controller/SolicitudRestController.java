@@ -51,4 +51,9 @@ public class SolicitudRestController {
 
     }
 
+    @GetMapping(value = "/{year}")
+    public List<Solicitud> listaSolicitud(@PathVariable Long year) {
+        return solicitudService.listaSolicitud(year);
+    }
+
 }

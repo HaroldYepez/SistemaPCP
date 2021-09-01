@@ -52,4 +52,9 @@ public class TramiteRestController {
 
     }
 
+    @GetMapping(value = "/{year}")
+    public List<Tramite> listaTramite(@PathVariable Long year) {
+        return tramiteService.listaTramite(year);
+    }
+
 }

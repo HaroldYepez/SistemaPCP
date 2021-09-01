@@ -14,6 +14,10 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import { FcViewDetails } from "react-icons/fc";
 import Button from "react-bootstrap/Button";
 import "./estilos.css";
+import DatePicker from 'react-datepicker';
+import { FormGroup } from "react-bootstrap";
+import 'react-datepicker/dist/react-datepicker.css'
+//import Fecha from "./Fecha"
 import { RequerimientoService } from "../services/RequerimientoService";
 import {CertificacionService} from "../services/CertificacionService";
 import {Solicitud_TramiteService} from "../services/Solicitud_TramiteService";
@@ -31,6 +35,7 @@ export default class POAvsCPrueba extends Component {
     constructor() {
         super();
         this.state = {
+          date: new Date().getFullYear().toString(),
           tramite: [],
           certificacion: [],
           actividad: [],
@@ -72,6 +77,10 @@ export default class POAvsCPrueba extends Component {
 
       cerrarModalGrafico = () => {
         this.setState({ modalGrafico: false });
+      };
+      onChange = (date) => {
+        console.log(date.getFullYear());
+        this.setState({ date: date.getFullYear().toString() });
       };
 
       getCertificaciones = () => {
@@ -305,6 +314,19 @@ export default class POAvsCPrueba extends Component {
                 />
               </InputGroup>
             </Col>
+            <Col>
+            <div align="center">
+                <Col sm={4}>
+                  <FormGroup>
+                    <DatePicker
+                      showYearPicker
+                      value={this.state.date}
+                      onChange={this.onChange}
+                    />
+                  </FormGroup>
+                </Col>
+              </div>
+            </Col>
             <Col style={{ maxWidth: "150px", padding: "0%", marginLeft: "59%"}}>
               <Button style={{ background:"#011d42"}} variant="secondary" onClick={() => this.llenarDatos()}>Gráfica</Button>
             </Col>
@@ -390,6 +412,11 @@ export default class POAvsCPrueba extends Component {
                 ></ReactHTMLTableToExcel>
               </div>
           </Col>
+          <Col>
+              <div align="right">
+              <Button variant="primary">Consultar Reporte</Button>
+              </div>
+            </Col>
           
           </Row>
         </Container>
