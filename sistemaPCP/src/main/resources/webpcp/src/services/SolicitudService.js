@@ -10,4 +10,7 @@ export class SolicitudService{
         return axios.get(this.baseUrl+"find/"+id).then(res=>res.data)
 
     }
+    gellYear(year){
+        return axios.get(this.baseUrl+year).then(res=> res.data)
+    }
 }

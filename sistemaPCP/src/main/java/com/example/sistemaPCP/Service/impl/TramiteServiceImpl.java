@@ -1,5 +1,7 @@
 package com.example.sistemaPCP.Service.impl;
 
+import java.util.List;
+
 import com.example.sistemaPCP.Commons.GenericServiceImpl;
 import com.example.sistemaPCP.model.Tramite;
 import com.example.sistemaPCP.Service.api.TramiteService;
@@ -17,5 +19,10 @@ public class TramiteServiceImpl extends GenericServiceImpl<Tramite, Long> implem
     @Override
     public CrudRepository<Tramite, Long> getDao() {
         return tramiteDaoAPi;
+    }
+
+    @Override
+    public List<Tramite> listaTramite(Long year) {
+        return tramiteDaoAPi.listaTramite(year);
     }
 }
