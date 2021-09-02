@@ -21,6 +21,12 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.client.RestTemplate;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 @SpringBootApplication
 public class SistemaPcpApplication {
 
@@ -34,10 +40,10 @@ public class SistemaPcpApplication {
 		RequerimientoServiceImpl repository2 = context.getBean(RequerimientoServiceImpl.class);
 		UnidadServiceImpl repositorio3 = context.getBean(UnidadServiceImpl.class);
 		List<Unidad> unidades = repositorio3.getAll();
-		for(int j = 0; j < unidades.size() -1; j++){
+		for (int j = 0; j < unidades.size() - 1; j++) {
 			Long unidad = unidades.get(j).getId_unidad();
-		
-			String uri = "http://192.168.253.6:8080/api/poaactividad/GetActividadByUnidad/"+unidad+"/"+year;
+
+			String uri = "http://192.168.253.6:8080/api/poaactividad/GetActividadByUnidad/" + unidad + "/" + year;
 			RestTemplate rest = new RestTemplate();
 			String results = rest.getForObject(uri, String.class);
 			try {
@@ -66,8 +72,7 @@ public class SistemaPcpApplication {
 					datos_req.add(requerimiento);
 					datos_req.add(prec_total);
 					datos_req.add(id_actividad);
-					requerimientos.put(id_requerimiento,datos_req);
-					
+					requerimientos.put(id_requerimiento, datos_req);
 
 				}
 
@@ -83,7 +88,7 @@ public class SistemaPcpApplication {
 			repository.save(new Actividad(Long.parseLong(key), val2, Float.parseFloat(val)));
 		}
 
-		for (Map.Entry<String, ArrayList<String>> reque : requerimientos.entrySet()){
+		for (Map.Entry<String, ArrayList<String>> reque : requerimientos.entrySet()) {
 			String clave = reque.getKey();
 			String precioTotal = reque.getValue().get(1);
 			String descripcion_req = reque.getValue().get(0).toString();
@@ -92,10 +97,10 @@ public class SistemaPcpApplication {
 			Float montoAct = Float.parseFloat(actividades.get(idActividad).get(1));
 			String desc_acti = actividades.get(idActividad).get(0);
 			Actividad actividad_r = new Actividad(Long.parseLong(idActividad), desc_acti, montoAct);
-			
+
 			// System.out.println(key + "$" + val);
-			repository2.save(new Requerimiento(Long.parseLong(clave), descripcion_req,
-						Float.parseFloat(precioTotal),actividad_r));
+			repository2.save(new Requerimiento(Long.parseLong(clave), descripcion_req, Float.parseFloat(precioTotal),
+					actividad_r));
 		}
 
 		// repository.save(new Actividad((long) 12, "equipar Lapto", 12));
